@@ -1,0 +1,3473 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Культурологія: Інтерактивний Тренажер & Вікторина</title>
+  
+  <!-- Fonts and Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-color: #0b0f19;
+      --card-bg: rgba(17, 24, 39, 0.65);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      
+      --primary: #6366f1;
+      --primary-grad: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      --accent: #8b5cf6;
+      --accent-glow: rgba(139, 92, 246, 0.15);
+      
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.1);
+      --error: #ef4444;
+      --error-bg: rgba(239, 68, 68, 0.1);
+      --warning: #f59e0b;
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.2);
+      
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+    
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+    }
+    
+    /* Background Glowing Blobs */
+    .glow-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.12;
+      z-index: -1;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+    .glow-1 {
+      width: 450px;
+      height: 450px;
+      background: #6366f1;
+      top: -100px;
+      left: -100px;
+    }
+    .glow-2 {
+      width: 550px;
+      height: 550px;
+      background: #8b5cf6;
+      bottom: -150px;
+      right: -150px;
+    }
+    .glow-3 {
+      width: 350px;
+      height: 350px;
+      background: #ec4899;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+    }
+
+    /* Glassmorphism Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(17, 24, 39, 0.3);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-sm);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Container & Layout */
+    .app-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header Nav */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 25px;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      margin-bottom: 25px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      font-size: 24px;
+      background: var(--primary-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .nav-btn:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-btn.active {
+      color: var(--text-primary);
+      background: rgba(99, 102, 241, 0.15);
+      border-color: rgba(99, 102, 241, 0.3);
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.1);
+    }
+
+    /* Main Content Sections */
+    .view-section {
+      display: none;
+      animation: fadeIn 0.4s ease-out forwards;
+      flex-grow: 1;
+    }
+
+    .view-section.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Card Standard Styles */
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 25px;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    /* DASHBOARD VIEW */
+    .welcome-banner {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 25px;
+      margin-bottom: 25px;
+    }
+
+    .welcome-text h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .welcome-text p {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      max-width: 600px;
+    }
+
+    .welcome-actions {
+      display: flex;
+      gap: 15px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: var(--transition);
+      border: none;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--primary-grad);
+      color: #fff;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.35);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-primary);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .stats-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .stat-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .stat-val {
+      font-size: 24px;
+      font-weight: 700;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Grid of Themes */
+    .themes-grid-title {
+      font-size: 22px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .themes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .theme-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .theme-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary-grad);
+    }
+
+    .theme-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-glow), var(--shadow-md);
+      border-color: rgba(99, 102, 241, 0.2);
+    }
+
+    .theme-num {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .theme-name {
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: 15px;
+      height: 48px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .theme-progress-container {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--primary-grad);
+      width: 0%;
+      transition: width 0.6s ease-out;
+    }
+
+    .theme-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .theme-badge {
+      padding: 2px 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 10px;
+      font-size: 11px;
+    }
+
+    /* STUDY VIEW */
+    .study-layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 25px;
+      align-items: start;
+    }
+
+    .study-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-height: calc(100vh - 160px);
+      position: sticky;
+      top: 20px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 12px 15px 12px 40px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.2);
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+    }
+
+    .theme-select-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .theme-select-item {
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-align: left;
+      transition: var(--transition);
+      display: flex;
+      gap: 12px;
+    }
+
+    .theme-select-item:hover {
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .theme-select-item.active {
+      background: rgba(99, 102, 241, 0.12);
+      border-color: rgba(99, 102, 241, 0.3);
+    }
+
+    .theme-select-item .item-num {
+      font-weight: 800;
+      color: var(--accent);
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .theme-select-item .item-title {
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.35;
+      color: var(--text-secondary);
+    }
+
+    .theme-select-item.active .item-title {
+      color: var(--text-primary);
+    }
+
+    .study-main {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .study-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .study-mode-toggles {
+      display: flex;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--card-border);
+    }
+
+    .toggle-btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-weight: 500;
+      font-size: 13px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .toggle-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .materials-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .subtopic-card {
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: rgba(17, 24, 39, 0.4);
+      transition: var(--transition);
+    }
+
+    .subtopic-card:hover {
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .subtopic-header {
+      padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .subtopic-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .subtopic-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .bullet-point {
+      position: relative;
+      padding-left: 24px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      transition: var(--transition);
+    }
+
+    .bullet-point::before {
+      content: '✦';
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--accent);
+      font-size: 14px;
+    }
+
+    .bullet-point strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Flashcard Style Overlay */
+    .flashcard-mode .bullet-point-container {
+      background: rgba(99, 102, 241, 0.04);
+      border: 1px dashed rgba(99, 102, 241, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 20px;
+      cursor: pointer;
+      transition: var(--transition);
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flashcard-mode .bullet-point-container:hover {
+      background: rgba(99, 102, 241, 0.08);
+      border-color: rgba(99, 102, 241, 0.4);
+    }
+
+    .flashcard-mode .bullet-content {
+      opacity: 0;
+      filter: blur(10px);
+      transition: all 0.4s ease;
+      width: 100%;
+      text-align: left;
+    }
+
+    .flashcard-mode .bullet-point-container.revealed .bullet-content {
+      opacity: 1;
+      filter: blur(0);
+    }
+
+    .flashcard-placeholder {
+      position: absolute;
+      color: var(--text-secondary);
+      font-weight: 500;
+      pointer-events: none;
+      transition: var(--transition);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .flashcard-mode .bullet-point-container.revealed .flashcard-placeholder {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    /* QUIZ VIEW */
+    .quiz-config {
+      max-width: 650px;
+      margin: 20px auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .config-title {
+      font-size: 24px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .theme-select-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      max-height: 250px;
+      overflow-y: auto;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .theme-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 13px;
+    }
+
+    .theme-checkbox-label:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .theme-checkbox-label input {
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+    }
+
+    .quiz-options-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .custom-select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      color: #fff;
+      padding: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .custom-select option {
+      background: var(--bg-color);
+      color: #fff;
+    }
+
+    /* Active Quiz Screen */
+    .quiz-active-container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .quiz-progress-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .quiz-timer {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--card-border);
+    }
+
+    .quiz-timer.critical {
+      color: var(--error);
+      border-color: rgba(239, 68, 68, 0.3);
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { box-shadow: 0 0 5px rgba(239, 68, 68, 0.1); }
+      to { box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+    }
+
+    .question-card {
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 30px;
+      text-align: center;
+    }
+
+    .question-category {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1.45;
+      color: #fff;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .option-btn {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      text-align: left;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 500;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      width: 100%;
+    }
+
+    .option-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+
+    .option-btn:hover:not(.disabled) {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: var(--text-primary);
+      transform: translateX(4px);
+    }
+
+    .option-btn:hover:not(.disabled) .option-badge {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    /* Answer States */
+    .option-btn.correct {
+      background: var(--success-bg) !important;
+      border-color: var(--success) !important;
+      color: #fff !important;
+    }
+
+    .option-btn.correct .option-badge {
+      background: var(--success) !important;
+      border-color: var(--success) !important;
+      color: #fff !important;
+    }
+
+    .option-btn.incorrect {
+      background: var(--error-bg) !important;
+      border-color: var(--error) !important;
+      color: #fff !important;
+    }
+
+    .option-btn.incorrect .option-badge {
+      background: var(--error) !important;
+      border-color: var(--error) !important;
+      color: #fff !important;
+    }
+
+    .option-btn.disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .quiz-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .feedback-panel {
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feedback-panel.correct { color: var(--success); }
+    .feedback-panel.incorrect { color: var(--error); }
+
+    /* RESULTS VIEW */
+    .results-card {
+      max-width: 650px;
+      margin: 20px auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .results-score-circle {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, rgba(139,92,246,0.15) 100%);
+      border: 6px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .score-percent {
+      font-size: 44px;
+      font-weight: 800;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .score-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .results-title {
+      font-size: 28px;
+      background: var(--primary-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .results-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      width: 100%;
+    }
+
+    .r-stat-box {
+      padding: 15px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+    }
+
+    .r-stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+    }
+
+    .r-stat-val {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .results-actions {
+      display: flex;
+      gap: 15px;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .mistakes-review-container {
+      width: 100%;
+      text-align: left;
+      margin-top: 15px;
+      border-top: 1px solid var(--card-border);
+      padding-top: 25px;
+    }
+
+    .mistakes-title {
+      font-size: 18px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--error);
+    }
+
+    .mistake-item {
+      padding: 15px;
+      border-radius: var(--radius-md);
+      background: rgba(239, 68, 68, 0.03);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+      margin-bottom: 12px;
+    }
+
+    .mistake-q {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .mistake-ans-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .m-ans {
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+    }
+
+    .m-ans.user {
+      background: var(--error-bg);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #fca5a5;
+    }
+
+    .m-ans.correct {
+      background: var(--success-bg);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      color: #a7f3d0;
+    }
+
+    .mistake-explanation {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      border-left: 2px solid var(--accent);
+      padding-left: 10px;
+      font-style: italic;
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 30px 0 10px 0;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 992px) {
+      .study-layout {
+        grid-template-columns: 1fr;
+      }
+      .study-sidebar {
+        max-height: 200px;
+        position: relative;
+        top: 0;
+      }
+      .welcome-banner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      nav {
+        width: 100%;
+        overflow-x: auto;
+      }
+      .results-stats-row {
+        grid-template-columns: 1fr;
+      }
+      .quiz-options-row {
+        grid-template-columns: 1fr;
+      }
+      .option-btn {
+        padding: 12px 15px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background glows -->
+  <div class="glow-blob glow-1"></div>
+  <div class="glow-blob glow-2"></div>
+  <div class="glow-blob glow-3"></div>
+
+  <div class="app-container">
+    
+    <!-- Top Glass Header -->
+    <header>
+      <div class="logo">
+        <i class="fa-solid fa-graduation-cap logo-icon"></i>
+        <span class="logo-text">Культурологія</span>
+      </div>
+      <nav>
+        <button class="nav-btn active" onclick="switchView('dashboard')">
+          <i class="fa-solid fa-house"></i> Панель
+        </button>
+        <button class="nav-btn" onclick="switchView('study')">
+          <i class="fa-solid fa-book-open"></i> Конспект
+        </button>
+        <button class="nav-btn" onclick="switchView('quiz')">
+          <i class="fa-solid fa-circle-question"></i> Вікторина
+        </button>
+      </nav>
+    </header>
+
+    <!-- 1. DASHBOARD VIEW -->
+    <section id="dashboard" class="view-section active">
+      <div class="welcome-banner">
+        <div class="glass-card welcome-text">
+          <h1 id="greeting-hour">Привіт! Готовий до навчання?</h1>
+          <p>Цей інтерактивний тренажер містить повний конспект лекцій для іспиту з культурології (всі 8 тем) та розумну систему тестування для перевірки знань.</p>
+          <div class="welcome-actions">
+            <button class="btn btn-primary" onclick="startQuickQuiz()">
+              <i class="fa-solid fa-bolt"></i> Швидкий тест (20 питань)
+            </button>
+            <button class="btn btn-secondary" onclick="switchView('study')">
+              <i class="fa-solid fa-book-open"></i> Читати конспект
+            </button>
+          </div>
+        </div>
+        
+        <div class="glass-card stats-panel">
+          <h3 style="font-size: 18px; margin-bottom: 5px;">Ваша статистика</h3>
+          
+          <div class="stat-box">
+            <div>
+              <span style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary)">Пройдено тестів</span>
+              <div class="stat-val" id="stats-total-tests">0</div>
+            </div>
+            <i class="fa-solid fa-circle-check" style="font-size: 24px; color: var(--success); opacity: 0.7"></i>
+          </div>
+
+          <div class="stat-box">
+            <div>
+              <span style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary)">Найвищий результат</span>
+              <div class="stat-val" id="stats-high-score">0%</div>
+            </div>
+            <i class="fa-solid fa-trophy" style="font-size: 24px; color: var(--warning); opacity: 0.7"></i>
+          </div>
+          
+          <div class="stat-box">
+            <div>
+              <span style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary)">Вивчено карт</span>
+              <div class="stat-val" id="stats-cards-viewed">0 / 37</div>
+            </div>
+            <i class="fa-solid fa-eye" style="font-size: 24px; color: var(--accent); opacity: 0.7"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="themes-grid-title">
+        <i class="fa-solid fa-layer-group" style="color: var(--primary)"></i>
+        <h2>Теми для вивчення</h2>
+      </div>
+
+      <div class="themes-grid" id="dashboard-themes-list">
+        <!-- Rendered Dynamically -->
+      </div>
+    </section>
+
+    <!-- 2. STUDY VIEW -->
+    <section id="study" class="view-section">
+      <div class="study-layout">
+        <!-- Sidebar Navigation -->
+        <div class="glass-card study-sidebar">
+          <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="study-search" placeholder="Пошук у конспекті..." oninput="filterStudyContent()">
+          </div>
+          
+          <div class="theme-select-list" id="study-themes-list">
+            <!-- Rendered Dynamically -->
+          </div>
+        </div>
+
+        <!-- Main Study Area -->
+        <div class="study-main">
+          <div class="glass-card" style="padding: 18px 25px;">
+            <div class="study-controls">
+              <div>
+                <h2 id="current-study-theme-title" style="font-size: 20px; line-height: 1.3">Завантаження...</h2>
+              </div>
+              
+              <div class="study-mode-toggles">
+                <button class="toggle-btn active" id="mode-reading" onclick="toggleStudyMode('reading')">
+                  <i class="fa-solid fa-book"></i> Читання
+                </button>
+                <button class="toggle-btn" id="mode-flashcard" onclick="toggleStudyMode('flashcard')">
+                  <i class="fa-solid fa-clone"></i> Картки запам'ятовування
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="materials-container" id="study-materials-container">
+            <!-- Rendered Dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. QUIZ CONFIG & ACTIVE VIEW -->
+    <section id="quiz" class="view-section">
+      
+      <!-- Quiz Setup Screen -->
+      <div class="glass-card quiz-config" id="quiz-setup-screen">
+        <div class="config-title">
+          <i class="fa-solid fa-sliders" style="color: var(--accent); font-size: 32px; margin-bottom: 15px; display: block;"></i>
+          <h2>Налаштування вікторини</h2>
+          <p style="font-size: 14px; color: var(--text-secondary); margin-top: 5px;">Виберіть теми та формат тестування</p>
+        </div>
+
+        <div class="form-group">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="form-label">Виберіть теми:</span>
+            <div style="display: flex; gap: 10px;">
+              <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 11px; border-radius: 6px;" onclick="toggleAllConfigCheckboxes(true)">Вибрати всі</button>
+              <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 11px; border-radius: 6px;" onclick="toggleAllConfigCheckboxes(false)">Скинути</button>
+            </div>
+          </div>
+          <div class="theme-select-grid" id="quiz-config-themes">
+            <!-- Checkboxes rendered dynamically -->
+          </div>
+        </div>
+
+        <div class="quiz-options-row">
+          <div class="form-group">
+            <span class="form-label">Кількість питань:</span>
+            <select class="custom-select" id="quiz-question-count">
+              <option value="10">10 питань</option>
+              <option value="20" selected>20 питань</option>
+              <option value="40">40 питань</option>
+              <option value="all">Усі можливі питання</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <span class="form-label">Режим оцінювання:</span>
+            <select class="custom-select" id="quiz-feedback-mode">
+              <option value="instant" selected>Миттєва перевірка (Навчальний)</option>
+              <option value="end">Результат в кінці (Екзамен)</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="startConfiguredQuiz()">
+          <i class="fa-solid fa-play"></i> Розпочати вікторину
+        </button>
+      </div>
+
+      <!-- Active Quiz Interface -->
+      <div class="quiz-active-container" id="quiz-active-screen" style="display: none;">
+        <div class="quiz-header">
+          <div class="quiz-progress-text" id="quiz-q-progress">Питання 1 з 20</div>
+          <div class="quiz-timer" id="quiz-timer-box">
+            <i class="fa-regular fa-clock"></i> <span id="quiz-timer-display">00:00</span>
+          </div>
+        </div>
+
+        <!-- Progress bar indicator -->
+        <div class="progress-bar-bg" style="height: 6px; margin-bottom: 10px;">
+          <div class="progress-bar-fill" id="quiz-progress-fill" style="width: 5%"></div>
+        </div>
+
+        <div class="glass-card question-card">
+          <div class="question-category" id="quiz-question-theme-name">Тема 1</div>
+          <div class="question-text" id="quiz-question-text">Тут буде питання?</div>
+        </div>
+
+        <div class="options-grid" id="quiz-options-grid">
+          <!-- 4 option buttons will be rendered dynamically -->
+        </div>
+
+        <div class="quiz-footer">
+          <div class="feedback-panel" id="quiz-feedback-text"></div>
+          <button class="btn btn-primary" id="quiz-next-btn" style="visibility: hidden;" onclick="handleNextQuestion()">
+            Наступне питання <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Quiz Results Summary -->
+      <div class="glass-card results-card" id="quiz-results-screen" style="display: none;">
+        <div class="results-score-circle">
+          <span class="score-percent" id="results-score-percent">85%</span>
+          <span class="score-label">Оцінка</span>
+        </div>
+
+        <div>
+          <h2 class="results-title" id="results-greeting">Гарна робота!</h2>
+          <p style="color: var(--text-secondary); margin-top: 5px;" id="results-subtitle">Ви показали хороший результат знань з культурології</p>
+        </div>
+
+        <div class="results-stats-row">
+          <div class="r-stat-box">
+            <div class="r-stat-label">Правильно</div>
+            <div class="r-stat-val" style="color: var(--success);" id="results-correct-count">17</div>
+          </div>
+          <div class="r-stat-box">
+            <div class="r-stat-label">Неправильно</div>
+            <div class="r-stat-val" style="color: var(--error);" id="results-incorrect-count">3</div>
+          </div>
+          <div class="r-stat-box">
+            <div class="r-stat-label">Час тесту</div>
+            <div class="r-stat-val" id="results-time-spent">02:14</div>
+          </div>
+        </div>
+
+        <div class="results-actions">
+          <button class="btn btn-primary" id="btn-retry-mistakes" onclick="retryIncorrectQuestionsOnly()">
+            <i class="fa-solid fa-triangle-exclamation"></i> Робота над помилками (<span id="results-mistakes-badge">3</span>)
+          </button>
+          <button class="btn btn-secondary" onclick="restartQuizSetup()">
+            <i class="fa-solid fa-arrow-rotate-left"></i> Нова вікторина
+          </button>
+          <button class="btn btn-secondary" onclick="switchView('dashboard')">
+            <i class="fa-solid fa-house"></i> На головну
+          </button>
+        </div>
+
+        <div class="mistakes-review-container" id="results-mistakes-container" style="display: none;">
+          <h3 class="mistakes-title">
+            <i class="fa-solid fa-circle-xmark"></i>
+            Огляд помилок
+          </h3>
+          <div id="results-mistakes-list">
+            <!-- Mistakes items list -->
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2026 Культурологія: Інтерактивний Тренажер. Створено для успішної підготовки до іспитів.</p>
+    </footer>
+
+  </div>
+
+  <script>
+    // ----------------------------------------------------
+    // DATA: STUDY MATERIALS (PARSED FROM answers_culturology.txt)
+    // ----------------------------------------------------
+    const STUDY_MATERIALS = [
+      {
+        themeNum: 1,
+        themeTitle: "ТЕМА 1. КУЛЬТУРОЛОГІЯ ЯК НАУКА. СПЕЦИФІКА КУЛЬТУРОЛОГІЧНОГО ЗНАННЯ",
+        topics: [
+          {
+            num: 1,
+            title: "Предмет культурології. Культурологія як гуманітарна наука.",
+            bullets: [
+              "<strong>Предмет:</strong> закони виникнення, розвитку, функціонування та взаємодії культурних явищ.",
+              "<strong>Термін:</strong> запропонував німецький фізик і філософ В. Освальд (1909 р.).",
+              "<strong>Обґрунтування предмета науки:</strong> американський вчений Леслі Вайт (1900-1975 рр.), визначивши культуру як цілісну самоорганізовану систему.",
+              "<strong>Суть:</strong> інтегративна гуманітарна наука на стику філософії, історії, соціології та антропології, що досліджує «людське в людині» в умовах масовизації суспільства."
+            ]
+          },
+          {
+            num: 2,
+            title: "Різноманітність і багатозначність підходів у дослідженні культури.",
+            bullets: [
+              "<strong>Комплексний підхід:</strong> всебічний аналіз матеріальної, духовної та художньої сфер.",
+              "<strong>Герменевтичний підхід (Г. Гадамер, П. Рікер):</strong> інтерпретація та розуміння культурних смислів і текстів через мову.",
+              "<strong>Аксіологічний (ціннісний) підхід:</strong> аналіз культури через призму ідеалів та цінностей (наприклад, християнська любов в українській культурі).",
+              "<strong>Культурно-антропологічний підхід:</strong> дослідження культури через повсякденність та суб'єктивний світ людини."
+            ]
+          },
+          {
+            num: 3,
+            title: "Поняття культури. Філософське осмислення культури.",
+            bullets: [
+              "<strong>Походження слова:</strong> «cultura» (лат. обробіток землі, з часів Цицерона — «виховання душі»).",
+              "<strong>Визначення:</strong> спосіб організації людської життєдіяльності, виражений у матеріальних і духовних цінностях, нормах та інститутах.",
+              "<strong>Три аспекти поняття культури:</strong> 1) сфера творчості й самореалізації; 2) ціннісне ставлення до світу; 3) штучний світ («друга природа»), протиставлений природній «натурі».",
+              "<strong>Осмислення:</strong> міра розвитку самої людини (гуманізм Відродження бачив людину деміургом, Просвітництво — носієм розуму)."
+            ]
+          },
+          {
+            num: 4,
+            title: "Протиріччя та проблеми розвитку культури.",
+            bullets: [
+              "<strong>Культура і цивілізація за Шпенглером:</strong> О. Шпенглер («Присмерк Європи») протиставив творчу живу культуру бездушній механічній цивілізації (як фазі її згасання й рутини).",
+              "<strong>Символізм і життєвість:</strong> Е. Кассірер назвав людину «animal symbolicum» (істота символічна). Культура є умовною; спроби мистецтва XX ст. подолати цю умовність (наприклад, поп-арт) призводять до спрощення її духовного змісту.",
+              "<strong>Штучність і природність:</strong> Культура як штучний світ відриває людину від природи (про це писав Ж.-Ж. Руссо), але без її інститутів суспільство скочується в анархію."
+            ]
+          },
+          {
+            num: 5,
+            title: "Історична динаміка культури.",
+            bullets: [
+              "<strong>За ставленням до природи:</strong> докласичний тип (пристосування, «спосіб жити»), класичний (активне перетворення, «друга природа»), посткласичний (екологічне збереження, «спосіб вижити»).",
+              "<strong>Західний тип культури:</strong> орієнтація на активну дію, раціональне пізнання, індивідуалізм (власне «Я»).",
+              "<strong>Східний тип культури:</strong> орієнтація на недіяння (споглядання), розчинення особистого «Я» в общині/Абсолюті, медитація."
+            ]
+          }
+        ]
+      },
+      {
+        themeNum: 2,
+        themeTitle: "ТЕМА 2. ОСНОВНІ ТЕОРІЇ ТА КОНЦЕПЦІЇ В КУЛЬТУРОЛОГІЇ",
+        topics: [
+          {
+            num: 1,
+            title: "Міфопоетична модель культури.",
+            bullets: [
+              "<strong>Міфологія:</strong> первісна синкретична (нероздільна) форма світогляду, де міф є не абстракцією, а живою реальністю й керівництвом до дії.",
+              "<strong>Ознаки міфомислення:</strong> злиття думки й дії, антропоморфізм (одухотворення природи), відсутність межі між об'єктом і суб'єктом (людина = рід = природа), дологічне мислення (асоціативність без логічних протиріч)."
+            ]
+          },
+          {
+            num: 2,
+            title: "Мислителі Стародавньої Греції, Риму, Середньовіччя та Відродження.",
+            bullets: [
+              "<strong>Античність:</strong> культура як «пайдея» (вихованість, гармонійний развіток особистості). Протагор бачив у культурі дар богів, Демокріт — винахід людини для задоволення потреб. Софісти й кініки критикували культуру як насильство над природою. Грецька культура зробила людину «мірою всіх речей».",
+              "<strong>Середньовіччя:</strong> теоцентризм. Культура підпорядкована релігії, земне життя гріховне, істинне життя — духовне (трансцендентне). Ідеал — смиренна людина.",
+              "<strong>Відродження:</strong> гуманізм та антропоцентризм. Людина — творець (деміург), подібний до Бога. Культура секуляризується, ідеалом стає універсальна особистість."
+            ]
+          },
+          {
+            num: 3,
+            title: "Культурно-антропологічні та історичні дослідження культури.",
+            bullets: [
+              "<strong>Й. Фостер:</strong> культура — спосіб пристосування до середовища й виживання; пізнання інших народів допомагає самопізнанню.",
+              "<strong>Й. Гердер:</strong> культура — історичний розвиток гуманності; мова є основою національної культури та «духу народу».",
+              "<strong>Е. Тейлор:</strong> представник еволюціонізму; визначив культуру як сукупність знань, вірувань, мистецтва, законів і звичаїв, набутих людиною в суспільстві.",
+              "<strong>Б. Малиновський:</strong> представник функціоналізму; культура — система інструментів та інститутів, створена для задоволення біологічних і соціальних потреб людини."
+            ]
+          },
+          {
+            num: 4,
+            title: "Філософсько-соціологічне осмислення культури.",
+            bullets: [
+              "<strong>Просвітництво:</strong> раціоналізм. Розум — двигун прогресу та вдосконалення людини. Ж.-Ж. Руссо виступив з критикою культури, яка псує мораль.",
+              "<strong>Романтизм:</strong> реакція на раціоналізм Просвітництва. Мистецтво — вища сфера буття; акцент на почуттях, інтуїції та унікальності національних традицій.",
+              "<strong>Марксизм:</strong> матеріалізм. Культура — це духовна надбудова над економічним базисом (способом виробництва). Людина — продукт суспільних відносин та праці."
+            ]
+          },
+          {
+            num: 5,
+            title: "Основні тенденції осмислення культури в сучасній філософії.",
+            bullets: [
+              "<strong>Франкфуртська школа (Е. Фромм, G. Маркузе):</strong> критика масової культури. Фромм описує «людину організації» — пасивного споживача, позбавленого критичного мислення та істинних потреб.",
+              "<strong>П. Сорокін:</strong> культура як зміна систем цінностей. Виділив чуттєвий (матеріальний), ідеаціональний (духовний) та ідеалістичний (гармонійний) типи.",
+              "<strong>Тейяр де Шарден:</strong> концепція ноосфери; культура як вищий етап космічної еволюції.",
+              "<strong>А. Швейцер:</strong> принцип «благоговіння перед життям» як основа космічної етики.",
+              "<strong>Герменевтика (Г. Гадамер):</strong> культура як мовна реальність, де порозуміння досягається через діалог."
+            ]
+          }
+        ]
+      },
+      {
+        themeNum: 3,
+        themeTitle: "ТЕМА 3. КУЛЬТУРА І СУСПІЛЬСТВО (ЦИВІЛІЗАЦІЯ)",
+        topics: [
+          {
+            num: 1,
+            title: "Поняття цивілізації.",
+            bullets: [
+              "<strong>Термін:</strong> увів маркіз О. Мірабо (1756 р.); Просвітителі розуміли цивілізацію як суспільство розуму та справедливості.",
+              "<strong>Співвідношення:</strong> культура характеризує внутрішній розвиток людини (творчість, цінності), а цивілізація — зовнішнє соціальне буття культури (технології, матеріальні блага, державні інститути).",
+              "<strong>Еволюційна стадія:</strong> А. Фергюсон, Л. Морган визначили цивілізацію як стадію розвитку людства після дикунства та варварства."
+            ]
+          },
+          {
+            num: 2,
+            title: "Концепції розвитку культури і цивілізації.",
+            bullets: [
+              "<strong>Циклічні концепції (заперечують лінійний прогрес):</strong>",
+              "1. <strong>Дж. Віко:</strong> історія розвивається по спіралі, періоди повторюються на новому рівні.",
+              "2. <strong>О. Шпенглер:</strong> історія як сукупність замкнених локальних культур. Цивілізація — це фінал, смерть культури, коли творчість поступається техніці та рутині.",
+              "3. <strong>А. Тойнбі:</strong> колообіг цивілізацій, що розвиваються як відповідь творчої еліти на виклики середовища (Виклик-Відповідь).",
+              "<strong>Лінійні концепції:</strong> прогресивний рух людства до єдиної світової цивілізації (Просвітництво, марксизм)."
+            ]
+          },
+          {
+            num: 3,
+            title: "Аполлонійська і діонісійська засади європейської культури.",
+            bullets: [
+              "<strong>Джерела (Ф. Ніцше, «Народження трагедії з духу музики»):</strong>",
+              "<strong>Аполлонійська засада (Аполлон):</strong> раціональна, світла, впорядкована; міра, закон форми, індивідуальність, пластичні мистецтва (скульптура).",
+              "<strong>Діонісійська засада (Діоніс):</strong> ірраціональна, стихійна, хаотична; руйнування меж особистості, сп'яніння, злиття з природою, музика й трагедія.",
+              "<strong>Суть:</strong> Ніцше вважав європейську культуру надмірно раціоналізованою (аполлонійською) й закликав відродити діонісійську життєву силу."
+            ]
+          }
+        ]
+      },
+      {
+        themeNum: 4,
+        themeTitle: "ТЕМА 4. КУЛЬТУРА І СУСПІЛЬСТВО (ТИПОЛОГІЯ ТА ФУНКЦІЇ)",
+        topics: [
+          {
+            num: 1,
+            title: "Суспільство і культура. Місце і функції культури.",
+            bullets: [
+              "<strong>Співвідношення:</strong> суспільство — система зв'язків між людьми; культура — позабіологічний спосіб організації та регулювання цієї життєдіяльності.",
+              "<strong>М. Мід:</strong> перша ознака культури в історії — зламана й загоєна стегнова кістка (свідчення взаємодопомоги та подолання біологічного егоїзму).",
+              "<strong>Е. Дюркгейм:</strong> суспільство регулюється «колективними уявленнями», які транслюються через культуру.",
+              "<strong>Функції культури:</strong> адаптивна (пристосування), комунікативна (мова), інтегративна (єднання навколо цінностей), соціалізація (засвоєння норм), інформаційна (трансляція досвіду), пізнавальна, аксіологічна (цінності), естетична (мистецтво)."
+            ]
+          },
+          {
+            num: 2,
+            title: "Типи суспільства і типи культури.",
+            bullets: [
+              "<strong>Первісне суспільство:</strong> синкретизм (людина не відділена від роду), міф як головний регулятор життя.",
+              "<strong>Доіндустріальне (традиційне):</strong> аграрний лад, станова ієрархія, релігійна домінанта, позаекономічне насильство.",
+              "<strong>Індустріальне:</strong> промисловість, раціоналізм, національні держави, економічне насильство.",
+              "<strong>Постіндустріальне (Д. Белл):</strong> сфера послуг (наука, освіта, культура), домінування інформаційного сектору й теоретичного знання, відносини «людина-людина» замість «людина-природа».",
+              "<strong>Інформаційна цивілізація (Е. Тоффлер, «Третя хвиля»):</strong> індивідуалізація виробництва, потреба у творчості, комунікабельності та гнучкості фахівців.",
+              "<strong>Теорія модернізації:</strong> перехід від традиційного суспільства (залежність від релігії, колективізм) до модерного (раціональність, індивідуалізм)."
+            ]
+          },
+          {
+            num: 3,
+            title: "Форми організації суспільного життя. Соціальні інститути.",
+            bullets: [
+              "<strong>Соціальні інститути культури:</strong> стійкі історичні форми організації спільної діяльності людей для збереження, поширення та відтворення цінностей.",
+              "<strong>Основні інститути:</strong> сім'я (первинне виховання), освіта (навчання), релігійні установи (духовність), музеї, бібліотеки, наука, медіа.",
+              "<strong>Значення:</strong> вони перетворюють індивідуальні творчі акти на стабільне загальносуспільне надбання через норми й правила."
+            ]
+          }
+        ]
+      },
+      {
+        themeNum: 5,
+        themeTitle: "ТЕМА 5. ГЕНЕЗА КУЛЬТУРИ (ІСТОРИЧНІ ПЕРІОДИ ТА УКРАЇНСЬКА КУЛЬТУРА)",
+        topics: [
+          {
+            num: 1,
+            title: "Форми існування первісної культури.",
+            bullets: [
+              "<strong>Еволюція матеріальної культури:</strong>",
+              "1. <strong>Палеоліт:</strong> кроманьйонці, крем'яні знаряддя, народження мистецтва (петрогліфи, «палеолітичні Венери» як культ матері).",
+              "2. <strong>Мезоліт:</strong> лук і стріли, рибальство, приручення собаки, людина стає центром малюнків.",
+              "3. <strong>Неоліт (неолітична революція):</strong> перехід від привласнення до відтворення (землеробство, скотарство), гончарство, ткацтво, мегаліти.",
+              "4. <strong>Енеоліт:</strong> використання міді, розквіт Трипільської культури на території України.",
+              "5. <strong>Епоха бронзи та заліза:</strong> металургія, приватна власність, кургани, скіфська культура (звіриний стиль).",
+              "<strong>Первісні вірування:</strong> тотемізм (віра в тваринного предка роду), магія (система обрядів впливу), фетишизм (віра в силу речей), анімізм (віра в духів та душу)."
+            ]
+          },
+          {
+            num: 2,
+            title: "Антична культура.",
+            bullets: [
+              "<strong>Особливості:</strong> колиска європейської культури. Риси: раціоналістичний світогляд, виникнення наук, філософії та права. Полісна система й народження демократії. Класичний ідеал гармонії й міри.",
+              "<strong>Епоха еллінізму:</strong> поєднала грецьку та східні культури (космополітизм, розвиток науки, створення Александрійської бібліотеки)."
+            ]
+          },
+          {
+            num: 3,
+            title: "Середньовічна культура.",
+            bullets: [
+              "<strong>Риси:</strong> теоцентризм, панування християнства, станова ієрархія.",
+              "<strong>Субкультури:</strong> офіційна церковна (аскетизм, символізм), лицарська (кодекс честі, куртуазність), міська (університети, світське мистецтво), народна карнавальна (сміхова культура площ).",
+              "<strong>Архітектура:</strong> романський стиль (масивні стіни, донжони) та готичний (стрільчасті арки, вітражі)."
+            ]
+          },
+          {
+            num: 4,
+            title: "Культура доби Відродження.",
+            bullets: [
+              "<strong>Гуманізм:</strong> секуляризація знань, повернення до античної спадщини.",
+              "<strong>Антропоцентризм та титанізм:</strong> людина — творець (деміург), подібний до Бога. Прагнення до універсальності здібностей (універсальна людина).",
+              "<strong>Криза гуманізму:</strong> виявилася в егоцентризмі й породила перші соціальні утопії (Т. Мор, Т. Кампанелла)."
+            ]
+          },
+          {
+            num: 5,
+            title: "Культура Нового часу (XVII-XIX ст.).",
+            bullets: [
+              "<strong>Особливості:</strong> розвиток капіталізму, секуляризація, доба Просвітництва (культ Розуму).",
+              "<strong>Напрями в мистецтві:</strong>",
+              "1. <strong>Бароко:</strong> емоційність, динамізм, контрасти, драма протиріч життя.",
+              "2. <strong>Класицизм:</strong> раціоналізм, підпорядкування почуттів державній службі та обов'язку.",
+              "3. <strong>Романтизм:</strong> культ почуттів, індивідуалізму, втеча від утилітарності.",
+              "4. <strong>Реалізм:</strong> об'єктивність, соціальна правда, типізація характерів.",
+              "5. <strong>Імпресіонізм:</strong> фіксація миттєвих емоцій, гра світла й кольору.",
+              "6. <strong>Модерн:</strong> плавність ліній, рослинні орнаменти, декоративність."
+            ]
+          },
+          {
+            num: 6,
+            title: "Культура Новітньої епохи (XX ст.).",
+            bullets: [
+              "<strong>Суть:</strong> криза гуманізму через світові війни й тоталітаризм. Панування науки й техніки (НТР), постіндустріальне суспільство.",
+              "<strong>Масова культура:</strong> орієнтована на середній рівень, стандартизацію смаків та ескапізм (втеча від реальності).",
+              "<strong>Глобалізація:</strong> єдиний інформаційний простір, уніфікація, але й потреба в діалозі культур.",
+              "<strong>Мистецтво:</strong> модернізм (відмова від копіювання дійсності — кубізм, сюрреалізм) та постмодернізм (концептуальне мистецтво — перформанс, інсталяція)."
+            ]
+          },
+          {
+            num: 7,
+            title: "Українська національна культура.",
+            bullets: [
+              "<strong>1 період (дохристиянський):</strong> трипільська культура (землеробство), язичницькі вірування.",
+              "<strong>2 період (kняжий):</strong> прийняття християнства у 988 р., розквіт Київської Русі; удар монголо-татарської навали.",
+              "<strong>3 період (литовсько-польський):</strong> тиск католицизму, боротьба за православну ідентичність через братства.",
+              "<strong>4 період (козацько-гетьманський, XVII-XVIII ст.):</strong> козацьке бароко, формування національної ідентичності.",
+              "<strong>5 період (відродження, XIX - поч. XX ст.):</strong> розвиток літератури (Т. Шевченко) в умовах русифікації (Валуєвський циркуляр).",
+              "<strong>6 період (радянський):</strong> репресії проти інтелігенції, але збереження потенціалу культури.",
+              "<strong>7 період (сучасний):</strong> незалежність, інтеграція у світ, мова як головний чинник збереження нації."
+            ]
+          }
+        ]
+      },
+      {
+        themeNum: 6,
+        themeTitle: "ТЕМА 6. КУЛЬТУРА МОВЛЕННЯ ТА ПРОФЕСІЙНО-ДІЛОВЕ МОВЛЕННЯ",
+        topics: [
+          {
+            num: 1,
+            title: "Мовлення як форма існування мови. Культура мовлення.",
+            bullets: [
+              "<strong>Мова і мовлення:</strong> мова — стабільна знакова система спільноти; мовлення — індивідуальний процес її використання.",
+              "<strong>Культура мовлення:</strong> дотримання норм літературної мови (орфоепічних, граматичних). Ознаки: правильність, точність, ясність, чистота, логічність.",
+              "<strong>Вислів Сократа:</strong> «Заговори, щоб я тебе побачим» (мовлення показує рівень культури особистості)."
+            ]
+          },
+          {
+            num: 2,
+            title: "Суржик і шляхи його подолання в українській мові.",
+            bullets: [
+              "<strong>Визначення:</strong> суржик — штучно змішаний гібрид української та російської мов, наслідок тривалої русифікації. Первинне значення слова — неякісна суміш різних злаків. Білоруський аналог — «трасянка».",
+              "<strong>Прояви:</strong> руйнування вимови та слововживання (наприклад, «ноль» замість «нуль», «получається» замість «виходить»).",
+              "<strong>Подолання:</strong> свідомий контроль мовлення, читання художньої літератури, робота зі словниками."
+            ]
+          },
+          {
+            num: 3,
+            title: "Усне спілкування як складова професійної діяльності.",
+            bullets: [
+              "<strong>Спілкування:</strong> соціальний процес обміну інформацією й почуттями вербальними та невербальними засобами.",
+              "<strong>Професійне спілкування:</strong> засіб службової діяльності фахівця. Вимагає вільного володіння фаховою мовою та спеціальною термінологією своєї галузі."
+            ]
+          },
+          {
+            num: 4,
+            title: "Ділове спілкування. Мовний, мовленнєвий і спілкувальний етикет.",
+            bullets: [
+              "<strong>Етикет:</strong> кодекс правил поведінки. Мовний етикет — словесні формули ввічливості (вітання, вибачення). Мовленнєвий — тон та темп. Спілкувальний — правила ведення бесіди.",
+              "<strong>Питання в діалозі:</strong> відкриті (розгорнуті), закриті (так/ні), дзеркальні (повтор слів партнера), риторичні (для привернення уваги), переломні (зміна теми), для обдумування."
+            ]
+          },
+          {
+            num: 5,
+            title: "Етикет телефонної розмови.",
+            bullets: [
+              "<strong>Особливості:</strong> обмеженість у часі, відсутність візуального контакту. Вимагає стислості й доброзичливості.",
+              "<strong>Етапи офіційного дзвінка:</strong> 1) привітання та відрекомендування; 2) суть справи (за списком питань); 3) прощання (трубку кладе той, хто дзвонив).",
+              "<strong>Мобільний етикет:</strong> вимикати звук у театрах/на лекціях, не класти телефон на стіл під час зустрічі, не говорити голосно в транспорті."
+            ]
+          }
+        ]
+      },
+      {
+        themeNum: 7,
+        themeTitle: "ТЕМА 7. ЕТИКА ТА ЕСТЕТИКА В ДУХОВНІЙ КУЛЬТУРІ ЛЮДСТВА",
+        topics: [
+          {
+            num: 1,
+            title: "Предмет етики. Основні категорії етики.",
+            bullets: [
+              "<strong>Етика:</strong> філософська наука про мораль та моральний спосіб освоєння світу.",
+              "<strong>Категорії етики:</strong> добро і зло (фундаментальні), обов'язок (вимоги суспільства), совість (внутрішнє сумління), честь (зовнішня оцінка людини суспільством) та гідність (самооцінка людини), справедливість."
+            ]
+          },
+          {
+            num: 2,
+            title: "Моральна свідомість.",
+            bullets: [
+              "<strong>Моральна свідомість:</strong> відображення моральної практики на суспільному (норми) та індивідуальному (переконання, почуття обов'язку й совісті) рівнях.",
+              "<strong>Моральна норма:</strong> зразок поведінки (наприклад, не красти, не вбивати), виконання якого забезпечується сумлінням та суспільною думкою (позаюридичний характер)."
+            ]
+          },
+          {
+            num: 3,
+            title: "Мораль: сутність, структура, функції.",
+            bullets: [
+              "<strong>Сутність моралі:</strong> добровільна система норм і цінностей, орієнтована на благо інших людей. Вища інстанція виправдання вчинків людини.",
+              "<strong>Функції:</strong> регулятивна (головна функція), оцінна (оцінка добра/зла), виховна, інтегративна (єднання людей), комунікативна (довіра), пізнавальна."
+            ]
+          },
+          {
+            num: 4,
+            title: "Естетика як філософська наука.",
+            bullets: [
+              "<strong>Визначення:</strong> естетика (термін увів О. Баумгартен, XVIII ст.) — філософська наука про естетичне освоєння світу за законами краси та про форми художньої творчості й мистецтва.",
+              "<strong>Еволюція в античності:</strong> частина натурфілософії (Космос як ідеал краси, мистецтво — «мімесис»/наслідування природи). Аристотель визначив красу як об'єктивні властивості речей (симетрія, порядок). У Середньовіччі краса — божественне світло."
+            ]
+          },
+          {
+            num: 5,
+            title: "Природа естетичного.",
+            bullets: [
+              "<strong>Естетичне:</strong> фундаментальна категорія естетики (загальна для прекрасного, потворного, трагічного тощо).",
+              "<strong>Суть задоволення:</strong> специфічний тип чуттєво-духовного задоволення, яке є безкорисливим (на відміну від фізичного задоволення від їжі чи відпочинку). Сприйняття краси є набутим процесом соціалізації."
+            ]
+          },
+          {
+            num: 6,
+            title: "Краса як цінність. Прекрасне.",
+            bullets: [
+              "<strong>Прекрасне:</strong> вихідна категорія естетики, що виражає досконалість форми та духовну гармонію.",
+              "<strong>Парадигми краси:</strong> об'єктивно-ідеалістична (втілення Абсолюту), суб'єктивно-ідеалістична (проект почуттів людини), матеріалістична (природна властивість речей), антропологічна (співвіднесення з людиною та її ідеалами)."
+            ]
+          },
+          {
+            num: 7,
+            title: "Художній образ — форма мислення в мистецтві.",
+            bullets: [
+              "<strong>Мистецтво:</strong> мислення в художніх образах. Художній образ — іносказальна, метафорична думка.",
+              "<strong>Два значення образу:</strong> мікрообраз (знак, наприклад, акорд, жест, кадр) та макрообраз (цілісна картина, портрет людини, образ епохи).",
+              "<strong>Калокагатія:</strong> античний ідеал єдності фізичної краси й моральної досконалості. Важливою є етична відповідальність митця за наслідки творчості."
+            ]
+          }
+        ]
+      },
+      {
+        themeNum: 8,
+        themeTitle: "ТЕМА 8. НОРМИ І ПРИНЦИПИ АКАДЕМІЧНОЇ ДОБРОЧЕСНОСТІ",
+        topics: [
+          {
+            num: 1,
+            title: "Доброчесність як складова культури.",
+            bullets: [
+              "<strong>Визначення:</strong> спрямованість волі людини на творення добра, її позитивна моральна якість.",
+              "<strong>Рівні:</strong> індивідуальний (чесність, особиста відповідальність) та інституційний (етичні кодекси установ, прозорість процедур).",
+              "<strong>Історія:</strong> Сократ бачив основу доброчесності у знаннях, Платон — у прагненні до блага, Аристотель — у прагненні до спільного блага та свідомому виборі правильно діяти."
+            ]
+          },
+          {
+            num: 2,
+            title: "Академічна доброчесність.",
+            bullets: [
+              "<strong>Визначення:</strong> сукупність етичних принципів та правил, якими керуються учасники освітнього процесу з метою забезпечення довіри до результатів навчання та наукових праць.",
+              "<strong>Порушення:</strong> 1. Академічний плагіат (чуже за своє), 2. Самоплагіат (старе за нове), 3. Фабрикація (вигадування даних), 4. Фальсифікація (підробка даних), 5. Списування, 6. Обман (неправда про роботу), 7. Хабарництво, 8. Необ'єктивне оцінювання.",
+              "<strong>Академічна відповідальність:</strong> попередження, обмеження участі у конкурсах/грантах, позбавлення нагород чи наукових ступенів, звільнення."
+            ]
+          }
+        ]
+      }
+    ];
+
+    // ----------------------------------------------------
+    // DATA: QUESTION BANK (88 QUESTIONS TARGETING EACH BULLET)
+    // ----------------------------------------------------
+    const QUESTION_BANK = [
+      // Theme 1
+      {
+        id: 1, theme: 1,
+        q: "Що є предметом дослідження культурології?",
+        options: [
+          "Закони виникнення, розвитку, функціонування та взаємодії культурних явищ",
+          "Фізико-хімічні процеси в навколишньому середовищі",
+          "Виключно писемні джерела стародавніх імперій",
+          "Економічні показники виробництва та споживання країн"
+        ],
+        correct: 0,
+        explanation: "Культурологія вивчає закони виникнення, розвитку, функціонування та взаємодії культурних явищ."
+      },
+      {
+        id: 2, theme: 1,
+        q: "Хто і коли вперше запропонував термін «культурологія»?",
+        options: [
+          "В. Освальд у 1909 році",
+          "Леслі Вайт у 1930 році",
+          "Едвард Тейлор у 1871 році",
+          "Освальд Шпенглер у 1918 році"
+        ],
+        correct: 0,
+        explanation: "Термін «культурологія» запропонував у 1909 році німецький фізик і філософ В. Освальд."
+      },
+      {
+        id: 3, theme: 1,
+        q: "Хто обґрунтував предмет культурології як самостійної науки, визначивши культуру як цілісну самоорганізовану систему?",
+        options: [
+          "Леслі Вайт",
+          "В. Освальд",
+          "Г. Гадамер",
+          "Броніслав Малиновський"
+        ],
+        correct: 0,
+        explanation: "Леслі Вайт (1900-1975) обґрунтував культурологію як науку, трактуючи культуру як цілісну систему."
+      },
+      {
+        id: 4, theme: 1,
+        q: "Яке визначення найкраще розкриває суть культурології за конспектом?",
+        options: [
+          "Інтегративна гуманітарна наука на стику філософії, історії, соціології та антропології, що досліджує «людське в людині»",
+          "Природнича наука про еволюцію фізіологічних ознак людини",
+          "Політико-економічне вчення про класову боротьбу в суспільстві",
+          "Наука, що вивчає виключно технічний та технологічний прогрес людства"
+        ],
+        correct: 0,
+        explanation: "Культурологія — це інтегративна гуманітарна наука, яка досліджує «людське в людині» в умовах масовизації суспільства."
+      },
+      {
+        id: 5, theme: 1,
+        q: "Які мислителі представляють герменевтичний підхід (розуміння та інтерпретація культурних смислів через мову)?",
+        options: [
+          "Г. Гадамер, П. Рікер",
+          "О. Шпенглер, А. Тойнбі",
+          "Й. Фостер, Й. Гердер",
+          "Е. Фромм, Г. Маркузе"
+        ],
+        correct: 0,
+        explanation: "Герменевтичний підхід у дослідженні культури представляють Г. Гадамер та П. Рікер."
+      },
+      {
+        id: 6, theme: 1,
+        q: "Що лежить в основі аксіологічного підходу до аналізу культури?",
+        options: [
+          "Аналіз культури через призму ідеалів та цінностей",
+          "Всебічне вивчення виключно матеріально-технічних досягнень",
+          "Дослідження повсякденного та суб'єктивного світу людини",
+          "Аналіз виключно граматичних норм та мовного етикету"
+        ],
+        correct: 0,
+        explanation: "Аксіологічний (ціннісний) підхід аналізує культуру через призму ідеалів та цінностей."
+      },
+      {
+        id: 7, theme: 1,
+        q: "Культурно-антропологічний підхід досліджує культуру через:",
+        options: [
+          "Повсякденність та суб'єктивний світ окремої людини",
+          "Закони економічного базису та виробничих відносин",
+          "Герменевтичну інтерпретацію текстів",
+          "Лише художні стилі та напрями образотворчого мистецтва"
+        ],
+        correct: 0,
+        explanation: "Культурно-антропологічний підхід орієнтований на дослідження культури через повсякденність та суб'єктивний світ людини."
+      },
+      {
+        id: 8, theme: 1,
+        q: "Від якого латинського слова походить термін «культура» і що воно спочатку означало?",
+        options: [
+          "«cultura» — обробіток землі (згодом за Цицерона — «виховання душі»)",
+          "«civilis» — міський, державний",
+          "«paideia» — гармонійне виховання дитини",
+          "«koinonia» — спілкування, громада"
+        ],
+        correct: 0,
+        explanation: "Термін походить від латинського «cultura» (обробіток землі), що пізніше за Цицерона трансформувалося у «виховання душі»."
+      },
+      {
+        id: 9, theme: 1,
+        q: "Які три аспекти поняття культури виділяють у її філософському осмисленні?",
+        options: [
+          "Сфера творчості, ціннісне ставлення до світу та штучний світ («друга природа»)",
+          "Політика, економіка та державне управління",
+          "Наука, техніка та релігія",
+          "Мова, писемність та фольклор"
+        ],
+        correct: 0,
+        explanation: "Філософські аспекти включають сферу творчості, ціннісне ставлення до світу та створення штучного світу («другої природи»)."
+      },
+      {
+        id: 10, theme: 1,
+        q: "Як О. Шпенглер у праці «Присмерк Європи» співвідніс культуру та цивілізацію?",
+        options: [
+          "Протиставив творчу живу культуру бездушній механічній цивілізації як фазі її згасання",
+          "Ототожнював їх як абсолютні синоніми",
+          "Вважав цивілізацію першоосновою, з якої народжується дух культури",
+          "Стверджував, що цивілізація є вищим проявом релігійного мистецтва"
+        ],
+        correct: 0,
+        explanation: "Освальд Шпенглер протиставив творчу живу культуру бездушній механічній цивілізації (згасанню культури)."
+      },
+      {
+        id: 11, theme: 1,
+        q: "Хто назвав людину «animal symbolicum» (істота символічна), підкреслюючи умовний характер культури?",
+        options: [
+          "Е. Кассірер",
+          "Ж.-Ж. Руссо",
+          "О. Шпенглер",
+          "Г. Гадамер"
+        ],
+        correct: 0,
+        explanation: "Ернст Кассірер визначив людину як «істоту символічну» (animal symbolicum)."
+      },
+      {
+        id: 12, theme: 1,
+        q: "Які типи культури виділяють за ставленням до природи в історичній динаміці?",
+        options: [
+          "Докласичний (пристосування), класичний («друга природа»), postкласичний (екологічне збереження)",
+          "Античний, Середньовічний, Новий час, Новітній час",
+          "Західний, Східний, Змішаний",
+          "Первісний, Варварський, Цивілізований"
+        ],
+        correct: 0,
+        explanation: "Виділяють докласичний (пристосування), класичний (перетворення/«друга природа») та посткласичний (збереження) типи."
+      },
+      {
+        id: 13, theme: 1,
+        q: "Східний тип культури характеризується передусім:",
+        options: [
+          "Орієнтацією на недіяння (споглядання), розчинення особистого «Я» в общині/Абсолюті",
+          "Орієнтацією на активне перетворення природи та раціональне пізнання",
+          "Яскраво вираженим індивідуалізмом та захистом приватних прав",
+          "Швидким впровадженням індустріальних технологій та прагматизмом"
+        ],
+        correct: 0,
+        explanation: "Східна культура орієнтована на недіяння (споглядання), медитацію та розчинення особистого «Я»."
+      },
+      
+      // Theme 2
+      {
+        id: 14, theme: 2,
+        q: "Чим є міфологія у контексті первісної культури?",
+        options: [
+          "Первісною синкретичною формою світогляду, де міф є життєвою реальністю й орієнтиром для дій",
+          "Звичайним набором казок та фантастичних історій для розваг",
+          "Першими спробами створення наукових теорій про Космос",
+          "Політичною доктриною для управління вождями своїм племенем"
+        ],
+        correct: 0,
+        explanation: "Міфологія є первісною синкретичною (нероздільною) формою світогляду та життєвою реальністю."
+      },
+      {
+        id: 15, theme: 2,
+        q: "Яка ознака НЕ є характерною для первісного міфомислення?",
+        options: [
+          "Строге логічне мислення та відокремлення суб'єкта від об'єкта",
+          "Злиття думки й дії",
+          "Антропоморфізм (одухотворення природи)",
+          "Злиття індивіда з родом та природою"
+        ],
+        correct: 0,
+        explanation: "Міфомислення є дологічним та синкретичним, воно позбавлене строгого відокремлення суб'єкта від об'єкта."
+      },
+      {
+        id: 16, theme: 2,
+        q: "Що в Стародавній Греції розуміли під терміном «пайдея»?",
+        options: [
+          "Вихованість, гармонійний розвиток особистості",
+          "Військову підготовку спартанців",
+          "Процес збору податків у полісах",
+          "Релігійні ритуали на честь Олімпійських богів"
+        ],
+        correct: 0,
+        explanation: "«Пайдея» в античності — це ідеал вихованості та всебічного гармонійного розвитку особистості."
+      },
+      {
+        id: 17, theme: 2,
+        q: "Як розділилися погляди Протагора та Демокріта щодо походження культури?",
+        options: [
+          "Протагор бачив у культурі дар богів, Демокріт — винахід людини для задоволення потреб",
+          "Протагор вважав її винаходом людини, Демокріт — даром богів",
+          "Обидва вважали культуру виключно шкідливим насильством над природою",
+          "Обидва бачили в культурі прояв божественного теоцентризму"
+        ],
+        correct: 0,
+        explanation: "Протагор вважав культуру даром богів, а Демокріт — результатам людської винахідливості для задоволення потреб."
+      },
+      {
+        id: 18, theme: 2,
+        q: "Який світогляд визначав культуру Середньовіччя?",
+        options: [
+          "Теоцентризм (культура підпорядкована релігії, ідеал — смиренна людина)",
+          "Антропоцентризм (людина як деміург, подібна до Бога)",
+          "Раціоналізм (культ Розуму та науки)",
+          "Матеріалізм (культура як надбудова над економікою)"
+        ],
+        correct: 0,
+        explanation: "Середньовічна культура базувалася на теоцентризмі, підпорядковуючи все життя релігії та духовній трансцендентності."
+      },
+      {
+        id: 19, theme: 2,
+        q: "Який ідеал особистості висунула доба Відродження на противагу середньовічному аскетизму?",
+        options: [
+          "Універсальна особистість, людина-творець (деміург)",
+          "Смиренний монах-аскет",
+          "Людина організації — пасивний споживач",
+          "Активний індустріальний підприємець"
+        ],
+        correct: 0,
+        explanation: "Відродження проголосило гуманізм та антропоцентризм, де ідеалом стала універсальна людина-деміург."
+      },
+      {
+        id: 20, theme: 2,
+        q: "Як визначав культуру мислитель Й. Фостер?",
+        options: [
+          "Спосіб пристосування до середовища й виживання; пізнання інших допомагає самопізнанню",
+          "Мовна реальність, де порозуміння шукають через герменевтику",
+          "Історичний процес розвитку гуманності через мову",
+          "Духовна надбудова над економічним базисом суспільства"
+        ],
+        correct: 0,
+        explanation: "Й. Фостер трактував культуру як спосіб пристосування до середовища й підкреслював роль етнографічного пізнання."
+      },
+      {
+        id: 21, theme: 2,
+        q: "Хто з мислителів вважав мову основою національної культури та «духу народу»?",
+        options: [
+          "Й. Гердер",
+          "Е. Тейлор",
+          "Б. Малиновський",
+          "Й. Фостер"
+        ],
+        correct: 0,
+        explanation: "Йоганн Гердер стверджував, що мова є основою національної культури та виразником «духу народу»."
+      },
+      {
+        id: 22, theme: 2,
+        q: "Як Едвард Тейлор (представник еволюціонізму) визначив поняття культури?",
+        options: [
+          "Сукупність знань, вірувань, мистецтва, законів і звичаїв, набутих людиною в суспільстві",
+          "Інструмент, створений суто для задоволення первинних біологічних потреб",
+          "Штучне середовище, яке псує природні моральні якості людини",
+          "Замкнені цикли розвитку локальних цивілізацій"
+        ],
+        correct: 0,
+        explanation: "Едвард Тейлор дав класичне еволюційне визначення культури як комплексу знань, вірувань, мистецтва та звичаїв."
+      },
+      {
+        id: 23, theme: 2,
+        q: "В чому суть функціонального підходу Б. Малиновського до культури?",
+        options: [
+          "Культура — це система інструментів та інститутів для задоволення біологічних і соціальних потреб",
+          "Культура є сукупністю символів та мовних кодів, які не мають практичної користі",
+          "Культура — це відображення класового протистояння в суспільстві",
+          "Культура розвивається циклічно і не має прямого практичного призначення"
+        ],
+        correct: 0,
+        explanation: "Броніслав Малиновський (функціоналізм) вважав культуру інструментом задоволення потреб людини."
+      },
+      {
+        id: 24, theme: 2,
+        q: "Який мислитель Просвітництва критикував культуру за те, що вона псує первісну мораль людини?",
+        options: [
+          "Ж.-Ж. Руссо",
+          "Й. Гердер",
+          "Й. Фостер",
+          "Е. Тейлор"
+        ],
+        correct: 0,
+        explanation: "Жан-Жак Руссо виступив з різкою критикою цивілізації та культури, які, на його думку, псують моральну чистоту людини."
+      },
+      {
+        id: 25, theme: 2,
+        q: "Який напрям у мистецтві виник як реакція на раціоналізм Просвітництва, роблячи акцент на почуттях, інтуїції та унікальності традицій?",
+        options: [
+          "Романтизм",
+          "Класицизм",
+          "Реалізм",
+          "Марксизм"
+        ],
+        correct: 0,
+        explanation: "Романтизм виник як реакція на культ Розуму, оспівуючи почуття, містицизм та унікальність націй."
+      },
+      {
+        id: 26, theme: 2,
+        q: "Яке розуміння культури пропонує марксизм?",
+        options: [
+          "Культура є духовною надбудовою над економічним базисом (способом виробництва)",
+          "Культура є вищим етапом космічної еволюції (ноосферою)",
+          "Культура розвивається незалежно від матеріального життя людей",
+          "Культура — це виключно сукупність мовних формул та етикету"
+        ],
+        correct: 0,
+        explanation: "У марксизмі культура трактується як духовна надбудова над матеріально-економічним базисом."
+      },
+      {
+        id: 27, theme: 2,
+        q: "Як представники Франкфуртської школи (Е. Фромм, Г. Маркузе) оцінювали масову культуру?",
+        options: [
+          "Критикували її за перетворення людини на пасивного споживача («людину організації»)",
+          "Вважали її найвищим досягненням демократичного суспільства",
+          "Бачили в ній засіб розкриття творчого потенціалу кожної особистості",
+          "Ототожнювали її з античним ідеалом «пайдеї»"
+        ],
+        correct: 0,
+        explanation: "Франкфуртська школа критикувала масову культуру за маніпуляцію свідомістю та створення пасивного споживача."
+      },
+      {
+        id: 28, theme: 2,
+        q: "Які типи культури виділяв П. Сорокін за панівною системою цінностей?",
+        options: [
+          "Чуттєвий (матеріальний), ідеаціональний (духовний) та ідеалістичний (гармонійний)",
+          "Первісний, середньовічний та новітній",
+          "Західний, східний та маргінальний",
+          "Аполлонійський, діонісійський та раціональний"
+        ],
+        correct: 0,
+        explanation: "Сорокін розрізняв чуттєвий (матеріальний), ідеаціональний (духовний) та ідеалістичний (змішаний/гармонійний) типи."
+      },
+      {
+        id: 29, theme: 2,
+        q: "Хто є автором концепції ноосфери, де культура розглядається як вищий етап космічної еволюції?",
+        options: [
+          "Тейяр де Шарден",
+          "Альберт Швейцер",
+          "П. Сорокін",
+          "Г. Гадамер"
+        ],
+        correct: 0,
+        explanation: "П'єр Тейяр де Шарден обґрунтував концепцію ноосфери та еволюційного розвитку культури."
+      },
+      {
+        id: 30, theme: 2,
+        q: "Який принцип запропонував А. Швейцер як основу космічної етики?",
+        options: [
+          "«Благоговіння перед життям»",
+          "«Людина — міра всіх речей»",
+          "«Розум — єдине джерело прогресу»",
+          "«Культура як мовна реальність»"
+        ],
+        correct: 0,
+        explanation: "Альберт Швейцер розробив гуманістичну концепцію етики, в основі якої лежить «благоговіння перед життям»."
+      },
+      {
+        id: 31, theme: 2,
+        q: "Як розуміє культуру сучасна філософська герменевтика (Г. Гадамер)?",
+        options: [
+          "Як мовну реальність, де порозуміння досягається через діалог",
+          "Як засіб біологічного пристосування індивіда",
+          "Як надбудову над матеріальним виробництвом",
+          "Як механічну систему, що знищує творчий дух"
+        ],
+        correct: 0,
+        explanation: "Герменевтика Гадамера розглядає культуру як мовну реальність, в якій діалог є ключем до розуміння."
+      },
+
+      // Theme 3
+      {
+        id: 32, theme: 3,
+        q: "Хто і коли першим увів у науковий обіг термін «цивілізація»?",
+        options: [
+          "Маркіз О. Мірабо у 1756 році",
+          "Освальд Шпенглер у 1918 році",
+          "Адам Фергюсон у 1767 році",
+          "Льюїс Морган у 1877 році"
+        ],
+        correct: 0,
+        explanation: "Термін «цивілізація» увів маркіз Оноре Мірабо у 1756 році."
+      },
+      {
+        id: 33, theme: 3,
+        q: "Яким є співвідношення культури та цивілізації за основним визначенням?",
+        options: [
+          "Культура — внутрішній розвиток (цінності, творчість), цивілізація — зовнішнє буття (техніка, держінститути, матеріальні блага)",
+          "Культура — це матеріальна сфера, цивілізація — виключно духовна сфера",
+          "Цивілізація передує культурі, виступаючи її первісною дикою стадією",
+          "Ці терміни є абсолютними синонімами в сучасній науці"
+        ],
+        correct: 0,
+        explanation: "Культура характеризує духовну/внутрішню сторону людини, тоді як цивілізація — матеріально-технічну та інституційну сторону суспільства."
+      },
+      {
+        id: 34, theme: 3,
+        q: "Які вчені визначали цивілізацію як історичну стадію розвитку людства, що настає після дикунства та варварства?",
+        options: [
+          "А. Фергюсон, Л. Морган",
+          "О. Шпенглер, А. Тойнбі",
+          "Дж. Віко, П. Сорокін",
+          "Ф. Ніцше, Е. Кассірер"
+        ],
+        correct: 0,
+        explanation: "Адам Фергюсон та Льюїс Морган запропонували тричленну еволюційну схему: дикунство — варварство — цивілізація."
+      },
+      {
+        id: 35, theme: 3,
+        q: "Як бачив історичний розвиток культури італійський філософ Джамбаттіста Віко?",
+        options: [
+          "Історія рухається по спіралі, періоди повторюються на новому рівні",
+          "Історія розвивається строго лінійно до повної наукової раціональності",
+          "Культура постійно регресує від божественного стану до тваринного хаосу",
+          "Розвиток суспільства повністю визначається географічним кліматом"
+        ],
+        correct: 0,
+        explanation: "Дж. Віко був одним із перших критиків лінійного прогресу, висунувши теорію спіралеподібного колообігу історії."
+      },
+      {
+        id: 36, theme: 3,
+        q: "Що розумів під «цивілізацією» О. Шпенглер?",
+        options: [
+          "Фінал, смерть живої творчої культури, коли панує техніка та рутина",
+          "Початок розквіту мистецтва та релігійної свідомості",
+          "Стадію повного злиття людини з природним середовищем",
+          "Єдину світову культуру майбутнього"
+        ],
+        correct: 0,
+        explanation: "За Шпенглером, цивілізація — це остання стадія розвитку будь-якої локальної культури, фаза її окостеніння та згасання."
+      },
+      {
+        id: 37, theme: 3,
+        q: "В чому полягає суть концепції цивілізацій Арнольда Тойнбі?",
+        options: [
+          "Колообіг локальних цивілізацій, які розвиваються як відповідь творчої еліти на виклики середовища",
+          "Рух людства по єдиній лінії через суспільно-економічні формації",
+          "Поділ світу на аполлонійський та діонісійський типи",
+          "Поступове злиття всіх культур під впливом глобалізації"
+        ],
+        correct: 0,
+        explanation: "Тойнбі розробив теорію локальних цивілізацій, життєдіяльність яких визначається законом «Виклику та Відповіді»."
+      },
+      {
+        id: 38, theme: 3,
+        q: "Які риси притаманні аполлонійській засаді культури за Ф. Ніцше?",
+        options: [
+          "Раціональність, світло, порядок, закон форми, індивідуальність, скульптура",
+          "Ірраціональність, стихія, хаос, музика, злиття з природою, сп'яніння",
+          "Суворе релігійне смирення та аскетичний спосіб життя",
+          "Прагнення до матеріального успіху та накопичення капіталу"
+        ],
+        correct: 0,
+        explanation: "Аполлонійський початок символізує світло, розум, форму, міру та індивідуалізацію."
+      },
+      {
+        id: 39, theme: 3,
+        q: "Діонісійська засада європейської культури (за Ф. Ніцше) базується на:",
+        options: [
+          "Ірраціональності, стихійності, руйнуванні меж особистості, музиці та сп'янінні",
+          "Логічному мисленні, математичній гармонії та пластичних мистецтвах",
+          "Державному обов'язку та раціональних нормах поведінки",
+          "Поверненні до християнських середньовічних догматів"
+        ],
+        correct: 0,
+        explanation: "Діонісійський початок пов'язаний з хаосом, екстазом, руйнуванням меж індивідуальності та музичною стихією."
+      },
+
+      // Theme 4
+      {
+        id: 40, theme: 4,
+        q: "Яку історичну знахідку відома антропологиня Маргарет Мід вважала найпершим свідченням появи культури?",
+        options: [
+          "Зламану й загоєну стегнову кістку людини (як факт турботи та допомоги ближньому)",
+          "Кам'яне рубило первісного мисливця",
+          "Наскальний малюнок у печері Ласко",
+          "Гончарний виріб із геометричним візерунком"
+        ],
+        correct: 0,
+        explanation: "Мід вказувала, що в дикій природі тварина із зламаною ногою гине. Загоєна кістка — знак того, що про неї піклувалися."
+      },
+      {
+        id: 41, theme: 4,
+        q: "За Емілем Дюркгеймом, суспільство регулюється:",
+        options: [
+          "«Колективними уявленнями», які транслюються через культуру",
+          "Виключно економічними інтересами панівного класу",
+          "Природними інстинктами виживання та розмноження",
+          "Юридичними кодексами, створеними державою"
+        ],
+        correct: 0,
+        explanation: "Дюркгейм обґрунтував роль «колективних уявлень» (норм, вірувань) у регулюванні суспільного життя."
+      },
+      {
+        id: 42, theme: 4,
+        q: "Яка функція культури відповідає за засвоєння індивідом соціальних норм, цінностей та ролей суспільства?",
+        options: [
+          "Соціалізація",
+          "Адаптивна",
+          "Комунікативна",
+          "Пізнавальна"
+        ],
+        correct: 0,
+        explanation: "Функція соціалізації забезпечує перетворення біологічного індивіда на соціальну особистість через навчання."
+      },
+      {
+        id: 43, theme: 4,
+        q: "Які ознаки притаманні традиційному (доіндустріальному) суспільству?",
+        options: [
+          "Аграрний лад, станова ієрархія, домінування релігії, позаекономічне насильство",
+          "Розвиток фабричного виробництва, секуляризація, раціоналізм",
+          "Домінування сфери послуг, інформаційного сектору та науки",
+          "Повна індивідуалізація виробництва та відсутність релігійних вірувань"
+        ],
+        correct: 0,
+        explanation: "Доіндустріальне суспільство спирається на сільське господарство, станові кордони та релігійні догми."
+      },
+      {
+        id: 44, theme: 4,
+        q: "Хто обґрунтував концепцію постіндустріального суспільства, де домінує сфера послуг, наука, освіта та інформаційні технології?",
+        options: [
+          "Д. Белл",
+          "Е. Тоффлер",
+          "М. Мід",
+          "Е. Дюркгейм"
+        ],
+        correct: 0,
+        explanation: "Соціолог Даніел Белл розробив класичну концепцію постіндустріального суспільства."
+      },
+      {
+        id: 45, theme: 4,
+        q: "Як Елвін Тоффлер назвав етап становлення інформаційної цивілізації у своїй однойменній праці?",
+        options: [
+          "«Третя хвиля»",
+          "«Присмерк Європи»",
+          "«Ноосфера»",
+          "«Постіндустріальний лад»"
+        ],
+        correct: 0,
+        explanation: "Тоффлер виділив три хвилі в історії: аграрну (перша), індустріальну (друга) та інформаційну (третя хвиля)."
+      },
+      {
+        id: 46, theme: 4,
+        q: "Що стверджує соціологічна «теорія модернізації»?",
+        options: [
+          "Описує перехід від традиційного суспільства (релігійність, колективізм) до модерного (раціональність, індивідуалізм)",
+          "Доводить необхідність повернення людини до первісного стану природи",
+          "Стверджує, що сучасне мистецтво має відмовитися від реалізму",
+          "Пророкує неминучу загибель європейської культури"
+        ],
+        correct: 0,
+        explanation: "Теорія модернізації аналізує перехід традиційних суспільств до сучасного раціонально-індивідуалістичного ладу."
+      },
+      {
+        id: 47, theme: 4,
+        q: "Чим є «соціальні інститути культури»?",
+        options: [
+          "Стійкими історичними формами організації спільної діяльності людей для збереження та відтворення цінностей",
+          "Будівлями, де розміщуються виключно музеї та картинні галереї",
+          "Організаціями, які займаються суто цензурою художніх творів",
+          "Політичними партіями, що фінансують культурні програми"
+        ],
+        correct: 0,
+        explanation: "Соціальні інститути (родина, освіта, наука, релігія) інституціоналізують діяльність людей для передачі культурного досвіду."
+      },
+
+      // Theme 5
+      {
+        id: 48, theme: 5,
+        q: "В яку історичну епоху виникло первісне мистецтво у формі наскальних петрогліфів та жіночих статуеток «палеолітичних Венер»?",
+        options: [
+          "Палеоліт",
+          "Мезоліт",
+          "Неоліт",
+          "Енеоліт"
+        ],
+        correct: 0,
+        explanation: "Перші статуетки («палеолітичні Венери») та печерні малюнки з'явилися в епоху пізнього палеоліту."
+      },
+      {
+        id: 49, theme: 5,
+        q: "Що було головним наслідком «неолітичної революції»?",
+        options: [
+          "Перехід від привласнювального господарства (мисливство, збиральництво) до відтворювального (землеробство, скотарство)",
+          "Початок широкого видобутку та обробки заліза",
+          "Виникнення перших християнських громад",
+          "Створення козацьких військових формувань"
+        ],
+        correct: 0,
+        explanation: "Неолітична революція — це кардинальний перехід людства до активного землеробства та тваринництва."
+      },
+      {
+        id: 50, theme: 5,
+        q: "До якої археологічної доби відноситься розквіт унікальної землеробської Трипільської культури на землях України?",
+        options: [
+          "Енеоліт (мідно-кам'яний вік)",
+          "Палеоліт (давній кам'яний вік)",
+          "Ранній залізний вік",
+          "Епоха пізньої бронзи"
+        ],
+        correct: 0,
+        explanation: "Трипільська культура на території України датується епохою енеоліту (IV-III тис. до н.е.)."
+      },
+      {
+        id: 51, theme: 5,
+        q: "Який художній стиль у мистецтві виробів з металу був візитною карткою скіфської культури?",
+        options: [
+          "Звіриний стиль",
+          "Рослинний модерн",
+          "Геометричний орнамент",
+          "Класицистична симетрія"
+        ],
+        correct: 0,
+        explanation: "Скіфське мистецтво відоме насамперед своїм оригінальним «звіриним стилем» зображення тварин на зброї та прикрасах."
+      },
+      {
+        id: 52, theme: 5,
+        q: "Як називається первісне вірування у надприродний зв'язок людського роду з певною твариною або рослиною-предком?",
+        options: [
+          "Тотемізм",
+          "Анімізм",
+          "Фетишизм",
+          "Магія"
+        ],
+        correct: 0,
+        explanation: "Тотемізм базується на вірі в існування спільного міфічного предка (тотема) для даного роду."
+      },
+      {
+        id: 53, theme: 5,
+        q: "Віра в існування духів, душі у всього живого та одухотворення сил природи — це:",
+        options: [
+          "Анімізм",
+          "Фетишизм",
+          "Тотемізм",
+          "Магія"
+        ],
+        correct: 0,
+        explanation: "Термін «анімізм» походить від латинського anima (душа) — віра в духів та одухотвореність природи."
+      },
+      {
+        id: 54, theme: 5,
+        q: "Які риси є фундаментальними для культури Античності (Греція та Рим)?",
+        options: [
+          "Раціоналістичний світогляд, виникнення наук і права, полісна демократія, ідеал гармонії й міри",
+          "Теоцентризм, релігійний аскетизм та повне підпорядкування мистецтва церкви",
+          "Індустріалізація, заперечення будь-яких традицій та культ техніки",
+          "Барокова емоційність та прагнення до асиметрії й хаосу"
+        ],
+        correct: 0,
+        explanation: "Античність заклала раціональні основи європейської науки, філософії та ідеал гармонії («пайдея»)."
+      },
+      {
+        id: 55, theme: 5,
+        q: "Що відбулося в епоху еллінізму?",
+        options: [
+          "Поєднання грецької та східних культур, розвиток космополітизму й науки (Александрійська бібліотека)",
+          "Повне знищення римлянами культурних надбань Афін",
+          "Масове прийняття ісламу народами Середземномор'я",
+          "Заборона театрів та філософських шкіл"
+        ],
+        correct: 0,
+        explanation: "Еллінізм — епоха взаємодії грецької та східних культур після походів Александра Македонського."
+      },
+      {
+        id: 56, theme: 5,
+        q: "Які чотири субкультури співіснували в культурі європейського Середньовіччя?",
+        options: [
+          "Офіційна церковна, лицарська, міська та народна карнавальна",
+          "Елітарна, масова, маргінальна та селянська",
+          "Релігійна, атеїстична, наукова та художня",
+          "Західна, східна, козацька та шляхетська"
+        ],
+        correct: 0,
+        explanation: "Середньовічне суспільство було розшарованим: кожному стану відповідала своя субкультура."
+      },
+      {
+        id: 57, theme: 5,
+        q: "В чому різниця між Романським та Готичним архітектурними стилями Середньовіччя?",
+        options: [
+          "Романський — масивні стіни, донжони; Готичний — стрільчасті арки, вітражі, прагнення вгору",
+          "Романський стиль будували з дерева, а Готичний — виключно з червоної цегли",
+          "Романський стиль використовував рослинні орнаменти, Готичний — геометричні фігури",
+          "Романський стиль виник у XX столітті, а Готичний — у Середньовіччі"
+        ],
+        correct: 0,
+        explanation: "Романська архітектура оборонна й приземкувата, а готична — легка, вертикальна, сповнена світла через вітражі."
+      },
+      {
+        id: 58, theme: 5,
+        q: "У чому виявилася глибока криза гуманізму наприкінці доби Відродження?",
+        options: [
+          "В егоцентризмі й появі перших соціальних утопій (Т. Мор, Т. Кампанелла)",
+          "У поверненні суспільства до суворого теоцентризму й монастирського аскетизму",
+          "У повній забороні світського живопису та театру",
+          "У виникненні масової культури та пасивному споживацтві"
+        ],
+        correct: 0,
+        explanation: "Зіткнення ідеалів гуманізму з жорстокою реальністю породило егоцентризм та мрії про ідеальний лад (утопії)."
+      },
+      {
+        id: 59, theme: 5,
+        q: "Який художній напрям Нового часу (XVII-XIX ст.) відзначався емоційністю, динамізмом та драмою протиріч життя?",
+        options: [
+          "Бароко",
+          "Класицизм",
+          "Романтизм",
+          "Реалізм"
+        ],
+        correct: 0,
+        explanation: "Стиль Бароко виражав динаміку, контрастність та трагічне світовідчуття людини епохи релігійних воєн."
+      },
+      {
+        id: 60, theme: 5,
+        q: "Для художнього напряму Класицизму визначальним є:",
+        options: [
+          "Раціоналізм, підпорядкування емоцій та почуттів державній службі й обов'язку",
+          "Фіксація миттєвих емоцій та гри світла й тіней",
+          "Втеча від утилітарності у світ мрій, казок та фольклору",
+          "Орієнтація на повсякденну соціальну правду без прикрас"
+        ],
+        correct: 0,
+        explanation: "Класицизм спирався на естетику розуму, суворої дисципліни, симетрії та громадянського обов'язку."
+      },
+      {
+        id: 61, theme: 5,
+        q: "Який напрям у мистецтві XIX ст. ставив за мету об'єктивне відображення соціальної правди й типізацію характерів?",
+        options: [
+          "Реалізм",
+          "Романтизм",
+          "Імпресіонізм",
+          "Модерн"
+        ],
+        correct: 0,
+        explanation: "Реалізм відмовився від романтичних мрій та класицистичного пафосу, звернувшись до реального життя."
+      },
+      {
+        id: 62, theme: 5,
+        q: "Як співвідносяться напрями Модернізму та Постмодернізму в мистецтві XX століття?",
+        options: [
+          "Модернізм відмовляється від копіювання дійсності (кубізм); Постмодернізм є концептуальним (перформанси, інсталяції)",
+          "Модернізм — це суворо реалістичний живопис, а Постмодернізм — виключно релігійна архітектура",
+          "Модернізм виник наприкінці століття, а Постмодернізм передував йому",
+          "Це синонімічні назви одного й того ж академічного напряму"
+        ],
+        correct: 0,
+        explanation: "Модернізм експериментував з формою, відкидаючи мімесис. Постмодернізм грає з контекстами, цитатами та акціями."
+      },
+      {
+        id: 63, theme: 5,
+        q: "В якому році відбулося прийняття християнства як державної релігії Київської Русі?",
+        options: [
+          "988 рік",
+          "1240 рік",
+          "1654 рік",
+          "1054 рік"
+        ],
+        correct: 0,
+        explanation: "Князь Володимир прийняв християнство та охрестив Русь у 988 році."
+      },
+      {
+        id: 64, theme: 5,
+        q: "Який самобутній архітектурно-художній стиль розквітнув в українській культурі козацько-гетьманської доби (XVII-XVIII ст.)?",
+        options: [
+          "Козацьке бароко",
+          "Романський стиль",
+          "Античний класицизм",
+          "Радянський модернізм"
+        ],
+        correct: 0,
+        explanation: "Українське (козацьке) бароко поєднало європейські традиції бароко з елементами українського народного мистецтва."
+      },
+      {
+        id: 65, theme: 5,
+        q: "Який циркуляр царського уряду обмежував видання книг українською мовою в Російській імперії у XIX ст.?",
+        options: [
+          "Валуєвський циркуляр (1863 р.)",
+          "Переяславський договір",
+          "Братський статут",
+          "Емський указ"
+        ],
+        correct: 0,
+        explanation: "У конспекті для 5 періоду української культури прямо згадано Валуєвський циркуляр."
+      },
+
+      // Theme 6
+      {
+        id: 66, theme: 6,
+        q: "Як співвідносяться поняття «мова» та «мовлення» за культурологічним конспектом?",
+        options: [
+          "Мова — стабільна знакова система спільноти; мовлення — індивідуальний процес її використання",
+          "Мова є процесом говоріння, а мовлення — це виключно правила граматики",
+          "Мова є індивідуальною для кожної людини, а мовлення — єдине для всього суспільства",
+          "Це тотожні поняття, які не мають жодних наукових відмінностей"
+        ],
+        correct: 0,
+        explanation: "Мова є соціальним кодом (знаковою системою), а мовлення — це індивідуальна реалізація цього коду."
+      },
+      {
+        id: 67, theme: 6,
+        q: "Який вислів Сократа підкреслює значення мовлення для оцінки культури особистості?",
+        options: [
+          "«Заговори, щоб я тебе побачив»",
+          "«Я знаю тільки те, що нічого не знаю»",
+          "«Пізнай самого себе»",
+          "«Мовчання — знак згоди»"
+        ],
+        correct: 0,
+        explanation: "Сократ пропонував співрозмовнику заговорити, оскільки саме мовлення виявляє інтелект, вихованість та характер."
+      },
+      {
+        id: 68, theme: 6,
+        q: "Що таке «суржик» і яке його первинне значення?",
+        options: [
+          "Штучно змішаний гібрид української та російської мов; первинно — неякісна суміш різних злаків",
+          "Специфічний діалект карпатського регіону; первинно — вид міцного напою",
+          "Молодіжний сленг комп'ютерників; первинно — суміш піску з глиною",
+          "Офіційний стиль дипломатичного листування; первинно — чисте золото"
+        ],
+        correct: 0,
+        explanation: "Суржик виник унаслідок русифікації; слово спочатку означало суміш жита й пшениці, ячменю й вівса."
+      },
+      {
+        id: 69, theme: 6,
+        q: "Як називається аналог українського суржику в білоруській мові?",
+        options: [
+          "Трасянка",
+          "Суржик",
+          "Погоня",
+          "Трасця"
+        ],
+        correct: 0,
+        explanation: "У білоруській мові суміш білоруської та російської мов називають «трасянкою»."
+      },
+      {
+        id: 70, theme: 6,
+        q: "У чому відмінність між мовним, мовленнєвим та спілкувальним етикетом?",
+        options: [
+          "Мовний — словесні формули ввічливості; мовленнєвий — тон і темп; спілкувальний — правила ведення бесіди",
+          "Мовний — правила орфографії; мовленнєвий — словниковий запас; спілкувальний — мова жестів",
+          "Це синоніми, які регулюють виключно зовнішній вигляд та одяг ділової людини",
+          "Мовний етикет використовують у побуті, а спілкувальний — тільки у суді"
+        ],
+        correct: 0,
+        explanation: "Мовний регулює етикетні слова; мовленнєвий — паралінгвістичні параметри (тон, швидкість); спілкувальний — логіку побудови розмови."
+      },
+      {
+        id: 71, theme: 6,
+        q: "Як називається запитання в діловому діалозі, яке дослівно повторює слова партнера для уточнення?",
+        options: [
+          "Дзеркальне",
+          "Відкрите",
+          "Закрите",
+          "Риторичне"
+        ],
+        correct: 0,
+        explanation: "Дзеркальне запитання дозволяє без конфронтації уточнити думку партнера, повторюючи його ж тези з питальною інтонацією."
+      },
+      {
+        id: 72, theme: 6,
+        q: "За правилами телефонного етикету, хто повинен першим класти слухавку?",
+        options: [
+          "Той, хто дзвонив (ініціатор розмови)",
+          "Той, кому дзвонили (адресат)",
+          "Той, хто є вищим за соціальним статусом",
+          "Не має значення, слухавку кладуть хаотично"
+        ],
+        correct: 0,
+        explanation: "Згідно з телефонним етикетом, завершує розмову та кладе слухавку ініціатор дзвінка."
+      },
+
+      // Theme 7
+      {
+        id: 73, theme: 7,
+        q: "Що є предметом дослідження філософської науки етики?",
+        options: [
+          "Мораль та моральний спосіб освоєння світу",
+          "Закони краси та художньої творчості",
+          "Історія релігійних обрядів та догматів",
+          "Психологічні особливості поведінки тварин"
+        ],
+        correct: 0,
+        explanation: "Етика досліджує мораль, її виникнення, структуру та роль у житті людини й суспільства."
+      },
+      {
+        id: 74, theme: 7,
+        q: "Які дві категорії етики вважаються найбільш фундаментальними й протилежними за змістом?",
+        options: [
+          "Добро і зло",
+          "Честь і гідність",
+          "Обов'язок і совість",
+          "Справедливість і закон"
+        ],
+        correct: 0,
+        explanation: "Добро і зло є вихідними, базовими оціночними категоріями моральної свідомості."
+      },
+      {
+        id: 75, theme: 7,
+        q: "Якою є різниця між категоріями «честь» та «гідність» в етиці?",
+        options: [
+          "Честь — зовнішня оцінка людини суспільством; гідність — внутрішня самооцінка людини",
+          "Честь — внутрішня самооцінка людини; гідність — зовнішня оцінка суспільства",
+          "Честь виражає релігійний обов'язок, гідність — правовий обов'язок",
+          "Це абсолютно тотожні поняття, які не мають наукових відмінностей"
+        ],
+        correct: 0,
+        explanation: "Честь пов'язана з репутацією та суспільним визнанням; гідність — з усвідомленням власної людської цінності."
+      },
+      {
+        id: 76, theme: 7,
+        q: "У чому полягає позаюридичний характер моральної норми?",
+        options: [
+          "Її виконання забезпечується внутрішнім сумлінням (совістю) та суспільною думкою",
+          "Вона прописана в кримінальному кодексі держави",
+          "За її порушення накладається адміністративний штраф",
+          "Вона створюється виключно судовими органами влади"
+        ],
+        correct: 0,
+        explanation: "Моральні норми неофіційні й добровільні, вони спираються на совість індивіда та неформальний осуд/схвалення громади."
+      },
+      {
+        id: 77, theme: 7,
+        q: "Яка функція моралі є головною в суспільстві?",
+        options: [
+          "Регулятивна",
+          "Оцінна",
+          "Виховна",
+          "Пізнавальна"
+        ],
+        correct: 0,
+        explanation: "Головна функція моралі — регулювати поведінку людей у всіх сферах суспільного життя."
+      },
+      {
+        id: 78, theme: 7,
+        q: "Хто і коли першим запропонував термін «естетика» як назву філософської науки?",
+        options: [
+          "О. Баумгартен у XVIII столітті",
+          "Аристотель у IV столітті до н.е.",
+          "Іммануїл Кант у XVIII столітті",
+          "Г. Гегель у XIX столітті"
+        ],
+        correct: 0,
+        explanation: "Німецький філософ Олександр Баумгартен увів термін «естетика» для позначення науки про чуттєве пізнання краси."
+      },
+      {
+        id: 79, theme: 7,
+        q: "Як визначав красу давньогрецький філософ Аристотель?",
+        options: [
+          "Як об'єктивні властивості речей (симетрія, порядок, пропорції)",
+          "Як суб'єктивне, безкорисливе почуття задоволення розуму",
+          "Як божественне світло, що осяює гріховний матеріальний світ",
+          "Як виключно практичну корисність речі для господарства"
+        ],
+        correct: 0,
+        explanation: "Аристотель вважав красу об'єктивною і виділяв такі її ознаки, як симетрія, порядок та межі."
+      },
+      {
+        id: 80, theme: 7,
+        q: "У чому полягає специфіка естетичного задоволення за конспектом?",
+        options: [
+          "Воно є безкорисливим і формується як набутий процес соціалізації",
+          "Воно задовольняє біологічні потреби організму (їжа, сон)",
+          "Воно завжди приносить безпосередній фінансовий прибуток",
+          "Воно є вродженим інстинктом, однаковим для всіх видів тварин"
+        ],
+        correct: 0,
+        explanation: "Естетичне почуття безкорисливе, духовне і формується в процесі виховання та засвоєння культури."
+      },
+      {
+        id: 81, theme: 7,
+        q: "Яку форму мислення використовує мистецтво для освоєння світу?",
+        options: [
+          "Художній образ (іносказальна, метафорична думка)",
+          "Математичну формулу та абстрактний графік",
+          "Суворий науковий експеримент та логічне поняття",
+          "Релігійну догму та церковний канон"
+        ],
+        correct: 0,
+        explanation: "Формою мислення в мистецтві є художній образ — специфічний спосіб відображення дійсності."
+      },
+      {
+        id: 82, theme: 7,
+        q: "Наведіть приклади мікрообразу та макрообразу в мистецтві за конспектом.",
+        options: [
+          "Мікрообраз — знак (акорд, жест, кадр); макрообраз — цілісна картина (образ епохи, портрет)",
+          "Мікрообраз — маленька скульптура; макрообраз — величезний замок",
+          "Мікрообраз — окрема літера; макрообраз — багатотомний роман",
+          "Мікрообраз — індивідуальна етика; макрообраз — суспільна естетика"
+        ],
+        correct: 0,
+        explanation: "Мікрообраз — найменший неподільний елемент (жест, акорд); макрообраз синтезує їх у цілісну картину."
+      },
+      {
+        id: 83, theme: 7,
+        q: "Який античний ідеал виражає гармонійну єдність фізичної краси та моральної досконалості?",
+        options: [
+          "Калокагатія",
+          "Мімесис",
+          "Катарсис",
+          "Пайдея"
+        ],
+        correct: 0,
+        explanation: "Калокагатія (від грецьких слів «прекрасний» і «добрий») — класичний грецький ідеал досконалої людини."
+      },
+
+      // Theme 8
+      {
+        id: 84, theme: 8,
+        q: "Як визначали основу доброчесності Сократ, Платон та Аристотель відповідно?",
+        options: [
+          "Сократ — у знаннях; Платон — у прагненні до блага; Аристотель — у прагненні до спільного блага та свідомому виборі",
+          "Сократ — у релігійній вірі; Платон — у законах держави; Аристотель — у матеріальному багатстві",
+          "Сократ — у фізичній силі; Платон — у художньому таланті; Аристотель — у логічних міркуваннях",
+          "Вони мали однакову точку зору і не розрізняли ці поняття"
+        ],
+        correct: 0,
+        explanation: "В античній етиці Сократ пов'язував доброчесність із знанням, Платон — з ідеєю блага, Аристотель — з практичною волею діяти задля спільного блага."
+      },
+      {
+        id: 85, theme: 8,
+        q: "Що таке «академічна доброчесність» за визначенням?",
+        options: [
+          "Сукупність етичних принципів та правил для забезпечення довіри до результатів навчання та наукових праць",
+          "Юридичний закон про фінансування закладів вищої освіти",
+          "Правила внутрішнього розпорядку у студентських гуртожитках",
+          "Система оцінювання знань студентів виключно за допомогою тестів"
+        ],
+        correct: 0,
+        explanation: "Академічна доброчесність — це моральний та етичний фундамент освітнього процесу, що забезпечує довіру до науки й дипломів."
+      },
+      {
+        id: 86, theme: 8,
+        q: "Оприлюднення (частково або повністю) наукових результатів, отриманих іншими особами, як результатів власного дослідження — це:",
+        options: [
+          "Академічний плагіат",
+          "Самоплагіат",
+          "Фабрикація",
+          "Фальсифікація"
+        ],
+        correct: 0,
+        explanation: "Використання чужих ідей, текстів чи результатів під своїм іменем без належного цитування є академічним плагіатом."
+      },
+      {
+        id: 87, theme: 8,
+        q: "Що таке «самоплагіат»?",
+        options: [
+          "Надання своїх раніше опублікованих наукових результатів як нових наукових результатів",
+          "Списування у самого себе під час письмової контрольної роботи",
+          "Використання вигаданих джерел інформації у власній курсовій роботі",
+          "Публікація наукової праці під вигаданим псевдонімом"
+        ],
+        correct: 0,
+        explanation: "Самоплагіат — це дублювання власних раніше оприлюднених текстів/даних та подання їх як оригінальних."
+      },
+      {
+        id: 88, theme: 8,
+        q: "У чому полягає відмінність між фабрикацією та фальсифікацією наукових даних?",
+        options: [
+          "Фабрикація — вигадування даних; Фальсифікація — підробка чи умисна зміна існуючих даних",
+          "Фабрикація — підробка даних; Фальсифікація — вигадування даних з нуля",
+          "Це синоніми, які означають виключно академічне хабарництво",
+          "Фабрикація стосується технічних наук, а фальсифікація — виключно гуманітарних"
+        ],
+        correct: 0,
+        explanation: "Фабрикація створює неіснуючі дані, а фальсифікація перекручує, підміняє чи редагує реальні дані дослідження."
+      }
+    ];
+
+    // ----------------------------------------------------
+    // APP STATE MANAGEMENT
+    // ----------------------------------------------------
+    let state = {
+      currentView: 'dashboard',
+      currentStudyThemeIndex: 0,
+      studyMode: 'reading', // 'reading' or 'flashcard'
+      
+      // Quiz State
+      quizQuestions: [],
+      quizCurrentIndex: 0,
+      quizAnswers: [], // stores object: { questionId, chosenOptionIndex, isCorrect }
+      quizTimerInterval: null,
+      quizTimeSpent: 0, // in seconds
+      quizConfig: {
+        themes: [1, 2, 3, 4, 5, 6, 7, 8],
+        count: 20,
+        feedback: 'instant' // 'instant' or 'end'
+      },
+      isAnswerSelected: false,
+      
+      // User Statistics (loaded from LocalStorage)
+      stats: {
+        totalTests: 0,
+        highScore: 0,
+        cardsViewed: {} // key: themeNum_topicNum, value: true
+      }
+    };
+
+    // Load Stats from LocalStorage
+    function loadStats() {
+      const saved = localStorage.getItem('culturology_app_stats');
+      if (saved) {
+        try {
+          state.stats = JSON.parse(saved);
+        } catch (e) {
+          console.error("Error parsing stats", e);
+        }
+      }
+      updateStatsUI();
+    }
+
+    // Save Stats to LocalStorage
+    function saveStats() {
+      localStorage.setItem('culturology_app_stats', JSON.stringify(state.stats));
+      updateStatsUI();
+    }
+
+    function updateStatsUI() {
+      document.getElementById('stats-total-tests').innerText = state.stats.totalTests || 0;
+      document.getElementById('stats-high-score').innerText = (state.stats.highScore || 0) + '%';
+      
+      const totalCards = 37; // Total subtopics across all 8 themes
+      const viewedCount = Object.keys(state.stats.cardsViewed || {}).length;
+      document.getElementById('stats-cards-viewed').innerText = `${viewedCount} / ${totalCards}`;
+    }
+
+    // Set Greeting based on time
+    function setGreeting() {
+      const hour = new Date().getHours();
+      let text = "Привіт! Готовий до навчання?";
+      if (hour >= 5 && hour < 12) text = "Доброго ранку! Час для нових знань ☕";
+      else if (hour >= 12 && hour < 17) text = "Доброго дня! Бажаємо успіхів у навчання 📖";
+      else if (hour >= 17 && hour < 22) text = "Доброго вечора! Продуктивного навчання 🌙";
+      else text = "Привіт! Пізнє навчання? Ти молодець! 🦉";
+      document.getElementById('greeting-hour').innerText = text;
+    }
+
+    // Navigation View Switcher
+    function switchView(viewName) {
+      // Clear previous active quiz timer if switching away
+      if (state.currentView === 'quiz' && viewName !== 'quiz') {
+        clearInterval(state.quizTimerInterval);
+      }
+      
+      state.currentView = viewName;
+      
+      // Toggle nav buttons active state
+      document.querySelectorAll('nav .nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('onclick').includes(viewName)) {
+          btn.classList.add('active');
+        }
+      });
+
+      // Toggle views display
+      document.querySelectorAll('.view-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(viewName).classList.add('active');
+
+      // Trigger specific view initializations
+      if (viewName === 'dashboard') {
+        renderDashboardThemes();
+        updateStatsUI();
+      } else if (viewName === 'study') {
+        renderStudySidebar();
+        renderStudyMain();
+      } else if (viewName === 'quiz') {
+        initQuizConfigUI();
+      }
+    }
+
+    // ----------------------------------------------------
+    // DASHBOARD VIEWS RENDERER
+    // ----------------------------------------------------
+    function renderDashboardThemes() {
+      const grid = document.getElementById('dashboard-themes-list');
+      grid.innerHTML = '';
+      
+      STUDY_MATERIALS.forEach((theme, index) => {
+        // Calculate progress for this theme
+        const totalSubtopics = theme.topics.length;
+        let viewed = 0;
+        theme.topics.forEach(t => {
+          if (state.stats.cardsViewed[`${theme.themeNum}_${t.num}`]) {
+            viewed++;
+          }
+        });
+        const percent = totalSubtopics > 0 ? Math.round((viewed / totalSubtopics) * 100) : 0;
+        
+        // Count questions in this theme
+        const qCount = QUESTION_BANK.filter(q => q.theme === theme.themeNum).length;
+
+        const card = document.createElement('div');
+        card.className = 'glass-card theme-card';
+        card.onclick = () => {
+          state.currentStudyThemeIndex = index;
+          switchView('study');
+        };
+
+        card.innerHTML = `
+          <div class="theme-num">Тема ${theme.themeNum}</div>
+          <div class="theme-name">${theme.themeTitle.replace(/ТЕМА \d+\.\s*/, '')}</div>
+          <div class="theme-progress-container">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-secondary)">
+              <span>Вивчено карт: ${viewed}/${totalSubtopics}</span>
+              <span>${percent}%</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width: ${percent}%"></div>
+            </div>
+            <div class="theme-card-footer" style="margin-top: 5px;">
+              <span class="theme-badge"><i class="fa-solid fa-clipboard-question"></i> ${qCount} тестів</span>
+              <span style="color: var(--accent); font-weight: 500">Читати <i class="fa-solid fa-angle-right"></i></span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // ----------------------------------------------------
+    // STUDY VIEW LOGIC
+    // ----------------------------------------------------
+    function renderStudySidebar() {
+      const list = document.getElementById('study-themes-list');
+      list.innerHTML = '';
+      
+      STUDY_MATERIALS.forEach((theme, index) => {
+        const item = document.createElement('button');
+        item.className = `theme-select-item ${index === state.currentStudyThemeIndex ? 'active' : ''}`;
+        item.onclick = () => {
+          state.currentStudyThemeIndex = index;
+          renderStudySidebar();
+          renderStudyMain();
+        };
+
+        item.innerHTML = `
+          <div class="item-num">${theme.themeNum}</div>
+          <div class="item-title">${theme.themeTitle.replace(/ТЕМА \d+\.\s*/, '')}</div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function renderStudyMain() {
+      const theme = STUDY_MATERIALS[state.currentStudyThemeIndex];
+      document.getElementById('current-study-theme-title').innerText = theme.themeTitle;
+      
+      const container = document.getElementById('study-materials-container');
+      container.innerHTML = '';
+      
+      theme.topics.forEach(topic => {
+        const card = document.createElement('div');
+        card.className = 'subtopic-card';
+        
+        // Header
+        const header = document.createElement('div');
+        header.className = 'subtopic-header';
+        header.innerHTML = `
+          <span class="subtopic-title">${topic.num}. ${topic.title}</span>
+          <i class="fa-solid fa-chevron-down" style="color: var(--text-muted)"></i>
+        `;
+        card.appendChild(header);
+
+        // Body
+        const body = document.createElement('div');
+        body.className = 'subtopic-body';
+
+        topic.bullets.forEach(bullet => {
+          if (state.studyMode === 'reading') {
+            const bp = document.createElement('div');
+            bp.className = 'bullet-point';
+            bp.innerHTML = bullet;
+            body.appendChild(bp);
+          } else {
+            // Flashcard container
+            const container = document.createElement('div');
+            container.className = 'bullet-point-container';
+            
+            // Check if already viewed in this session
+            container.onclick = () => {
+              if (!container.classList.contains('revealed')) {
+                container.classList.add('revealed');
+                
+                // Track stats
+                const key = `${theme.themeNum}_${topic.num}`;
+                if (!state.stats.cardsViewed[key]) {
+                  state.stats.cardsViewed[key] = true;
+                  saveStats();
+                }
+              } else {
+                container.classList.remove('revealed');
+              }
+            };
+
+            container.innerHTML = `
+              <div class="flashcard-placeholder">
+                <i class="fa-solid fa-eye" style="font-size: 20px; color: var(--primary)"></i>
+                <span>Натисніть, щоб відкрити відповідь</span>
+              </div>
+              <div class="bullet-content">
+                <div class="bullet-point" style="padding-left: 0;">${bullet}</div>
+              </div>
+            `;
+            body.appendChild(container);
+          }
+        });
+        
+        card.appendChild(body);
+        container.appendChild(card);
+      });
+    }
+
+    function toggleStudyMode(mode) {
+      state.studyMode = mode;
+      document.getElementById('mode-reading').classList.toggle('active', mode === 'reading');
+      document.getElementById('mode-flashcard').classList.toggle('active', mode === 'flashcard');
+      renderStudyMain();
+    }
+
+    function filterStudyContent() {
+      const query = document.getElementById('study-search').value.toLowerCase().trim();
+      const sidebarItems = document.querySelectorAll('.theme-select-item');
+      
+      if (!query) {
+        renderStudySidebar();
+        renderStudyMain();
+        return;
+      }
+      
+      // Search matches
+      STUDY_MATERIALS.forEach((theme, index) => {
+        let hasMatch = theme.themeTitle.toLowerCase().includes(query);
+        theme.topics.forEach(t => {
+          if (t.title.toLowerCase().includes(query)) hasMatch = true;
+          t.bullets.forEach(b => {
+            if (b.toLowerCase().includes(query)) hasMatch = true;
+          });
+        });
+        
+        const sidebarEl = sidebarItems[index];
+        if (sidebarEl) {
+          sidebarEl.style.display = hasMatch ? 'flex' : 'none';
+        }
+      });
+    }
+
+    // ----------------------------------------------------
+    // QUIZ CONFIGURATION AND CONTROLS
+    // ----------------------------------------------------
+    function initQuizConfigUI() {
+      document.getElementById('quiz-setup-screen').style.display = 'block';
+      document.getElementById('quiz-active-screen').style.display = 'none';
+      document.getElementById('quiz-results-screen').style.display = 'none';
+
+      const checkboxContainer = document.getElementById('quiz-config-themes');
+      checkboxContainer.innerHTML = '';
+      
+      STUDY_MATERIALS.forEach(theme => {
+        const label = document.createElement('label');
+        label.className = 'theme-checkbox-label';
+        
+        // Count questions in this theme
+        const qCount = QUESTION_BANK.filter(q => q.theme === theme.themeNum).length;
+
+        label.innerHTML = `
+          <input type="checkbox" value="${theme.themeNum}" checked>
+          <span><strong>Тема ${theme.themeNum}:</strong> ${theme.themeTitle.replace(/ТЕМА \d+\.\s*/, '')} (${qCount} питань)</span>
+        `;
+        checkboxContainer.appendChild(label);
+      });
+    }
+
+    function toggleAllConfigCheckboxes(check) {
+      const checkboxes = document.querySelectorAll('#quiz-config-themes input[type="checkbox"]');
+      checkboxes.forEach(cb => cb.checked = check);
+    }
+
+    function startConfiguredQuiz() {
+      const selectedThemes = Array.from(document.querySelectorAll('#quiz-config-themes input[type="checkbox"]:checked'))
+                                  .map(cb => parseInt(cb.value));
+      
+      if (selectedThemes.length === 0) {
+        alert("Будь ласка, оберіть хоча б одну тему!");
+        return;
+      }
+
+      const countSelect = document.getElementById('quiz-question-count').value;
+      const feedback = document.getElementById('quiz-feedback-mode').value;
+      
+      // Filter questions by selected themes
+      let pool = QUESTION_BANK.filter(q => selectedThemes.includes(q.theme));
+      
+      // Shuffle pool
+      pool = shuffleArray([...pool]);
+      
+      // Set count limit
+      let testSize = pool.length;
+      if (countSelect !== 'all') {
+        testSize = Math.min(parseInt(countSelect), pool.length);
+      }
+      
+      state.quizQuestions = pool.slice(0, testSize);
+      state.quizConfig.feedback = feedback;
+      
+      startQuizGameplay();
+    }
+
+    function startQuickQuiz() {
+      // 20 random questions from all themes
+      let pool = shuffleArray([...QUESTION_BANK]);
+      state.quizQuestions = pool.slice(0, 20);
+      state.quizConfig.feedback = 'instant';
+      
+      switchView('quiz');
+      startQuizGameplay();
+    }
+
+    function startQuizGameplay() {
+      document.getElementById('quiz-setup-screen').style.display = 'none';
+      document.getElementById('quiz-active-screen').style.display = 'block';
+      document.getElementById('quiz-results-screen').style.display = 'none';
+      
+      state.quizCurrentIndex = 0;
+      state.quizAnswers = [];
+      state.quizTimeSpent = 0;
+      state.isAnswerSelected = false;
+      
+      // Timer setup
+      clearInterval(state.quizTimerInterval);
+      document.getElementById('quiz-timer-display').innerText = "00:00";
+      state.quizTimerInterval = setInterval(() => {
+        state.quizTimeSpent++;
+        const mins = Math.floor(state.quizTimeSpent / 60).toString().padStart(2, '0');
+        const secs = (state.quizTimeSpent % 60).toString().padStart(2, '0');
+        document.getElementById('quiz-timer-display').innerText = `${mins}:${secs}`;
+      }, 1000);
+
+      renderCurrentQuestion();
+    }
+
+    // Helper to shuffle arrays
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // Render Question Gameplay
+    function renderCurrentQuestion() {
+      state.isAnswerSelected = false;
+      
+      // Hide next button
+      const nextBtn = document.getElementById('quiz-next-btn');
+      nextBtn.style.visibility = 'hidden';
+      nextBtn.innerText = state.quizCurrentIndex === state.quizQuestions.length - 1 ? "Завершити тест" : "Наступне питання";
+      
+      // Clear feedback text
+      document.getElementById('quiz-feedback-text').innerHTML = '';
+      
+      const qData = state.quizQuestions[state.quizCurrentIndex];
+      
+      // Update Progress
+      document.getElementById('quiz-q-progress').innerText = `Питання ${state.quizCurrentIndex + 1} з ${state.quizQuestions.length}`;
+      const progressPercent = Math.round(((state.quizCurrentIndex + 1) / state.quizQuestions.length) * 100);
+      document.getElementById('quiz-progress-fill').style.width = `${progressPercent}%`;
+      
+      // Set category text
+      const themeTitle = STUDY_MATERIALS.find(t => t.themeNum === qData.theme)?.themeTitle || `Тема ${qData.theme}`;
+      document.getElementById('quiz-question-theme-name').innerText = `Тема ${qData.theme}: ${themeTitle.replace(/ТЕМА \d+\.\s*/, '')}`;
+      
+      // Set Question Text
+      document.getElementById('quiz-question-text').innerText = qData.q;
+      
+      // Options Grid with randomized display
+      const optionsGrid = document.getElementById('quiz-options-grid');
+      optionsGrid.innerHTML = '';
+      
+      // Create a mapped array to remember original indices after shuffling
+      let mappedOptions = qData.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
+      mappedOptions = shuffleArray(mappedOptions);
+      
+      mappedOptions.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.onclick = () => selectOption(btn, opt.originalIndex, qData.correct);
+        
+        const badgeLetter = String.fromCharCode(65 + idx); // A, B, C, D
+        
+        btn.innerHTML = `
+          <span class="option-badge">${badgeLetter}</span>
+          <span class="option-text">${opt.text}</span>
+        `;
+        
+        optionsGrid.appendChild(btn);
+      });
+    }
+
+    // Option Selection Action
+    function selectOption(selectedBtn, chosenIndex, correctIndex) {
+      if (state.isAnswerSelected) return; // Prevent double select
+      state.isAnswerSelected = true;
+      
+      const isCorrect = (chosenIndex === correctIndex);
+      
+      // Store result
+      state.quizAnswers.push({
+        questionId: state.quizQuestions[state.quizCurrentIndex].id,
+        chosenOptionIndex: chosenIndex,
+        isCorrect: isCorrect
+      });
+
+      // UI Reaction based on mode
+      if (state.quizConfig.feedback === 'instant') {
+        const allButtons = document.querySelectorAll('.option-btn');
+        allButtons.forEach(btn => {
+          btn.classList.add('disabled');
+          
+          // Find which original option index this button belongs to
+          // If correct, highlight green. If chosen but wrong, highlight red.
+          const optText = btn.querySelector('.option-text').innerText;
+          const originalQ = state.quizQuestions[state.quizCurrentIndex];
+          const originalIdx = originalQ.options.indexOf(optText);
+          
+          if (originalIdx === correctIndex) {
+            btn.classList.add('correct');
+          } else if (originalIdx === chosenIndex && !isCorrect) {
+            btn.classList.add('incorrect');
+          }
+        });
+
+        // Set feedback text and explanation
+        const feedbackEl = document.getElementById('quiz-feedback-text');
+        if (isCorrect) {
+          feedbackEl.className = 'feedback-panel correct';
+          feedbackEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Правильно!`;
+        } else {
+          feedbackEl.className = 'feedback-panel incorrect';
+          feedbackEl.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Неправильно. Ознайомтесь з поясненням.`;
+        }
+        
+        // Append short note from database to help study
+        const explanationEl = document.createElement('div');
+        explanationEl.style.fontSize = '12px';
+        explanationEl.style.color = 'var(--text-secondary)';
+        explanationEl.style.marginTop = '4px';
+        explanationEl.style.fontStyle = 'italic';
+        explanationEl.innerText = state.quizQuestions[state.quizCurrentIndex].explanation;
+        feedbackEl.appendChild(explanationEl);
+      } else {
+        // Exam mode: just highlight selected button in gray to show selection
+        selectedBtn.style.borderColor = 'var(--accent)';
+        selectedBtn.style.background = 'rgba(139, 92, 246, 0.08)';
+        
+        const allButtons = document.querySelectorAll('.option-btn');
+        allButtons.forEach(btn => btn.classList.add('disabled'));
+      }
+
+      // Show next button
+      document.getElementById('quiz-next-btn').style.visibility = 'visible';
+    }
+
+    function handleNextQuestion() {
+      if (state.quizCurrentIndex < state.quizQuestions.length - 1) {
+        state.quizCurrentIndex++;
+        renderCurrentQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+
+    // End Quiz and show results
+    function finishQuiz() {
+      clearInterval(state.quizTimerInterval);
+      
+      document.getElementById('quiz-setup-screen').style.display = 'none';
+      document.getElementById('quiz-active-screen').style.display = 'none';
+      document.getElementById('quiz-results-screen').style.display = 'flex';
+      
+      const total = state.quizQuestions.length;
+      const correct = state.quizAnswers.filter(a => a.isCorrect).length;
+      const incorrect = total - correct;
+      const percent = total > 0 ? Math.round((correct / total) * 100) : 0;
+      
+      // Update stats
+      state.stats.totalTests = (state.stats.totalTests || 0) + 1;
+      if (percent > (state.stats.highScore || 0)) {
+        state.stats.highScore = percent;
+      }
+      saveStats();
+
+      // UI updates
+      document.getElementById('results-score-percent').innerText = `${percent}%`;
+      document.getElementById('results-correct-count').innerText = correct;
+      document.getElementById('results-incorrect-count').innerText = incorrect;
+      
+      const mins = Math.floor(state.quizTimeSpent / 60).toString().padStart(2, '0');
+      const secs = (state.quizTimeSpent % 60).toString().padStart(2, '0');
+      document.getElementById('results-time-spent').innerText = `${mins}:${secs}`;
+      
+      // Greeting based on score
+      let greet = "Потрібно підготуватися";
+      let sub = "Рекомендуємо прочитати конспект та спробувати ще раз.";
+      if (percent >= 90) {
+        greet = "Чудовий результат! 🎉";
+        sub = "Ви відмінно знаєте матеріал та готові до іспиту!";
+      } else if (percent >= 75) {
+        greet = "Гарна робота! 👍";
+        sub = "У вас хороші знання, але є над чим попрацювати.";
+      } else if (percent >= 50) {
+        greet = "Задовільний результат";
+        sub = "Варто краще вивчити картки для впевненості.";
+      }
+      
+      document.getElementById('results-greeting').innerText = greet;
+      document.getElementById('results-subtitle').innerText = sub;
+
+      // Handle mistakes retry button
+      const retryBtn = document.getElementById('btn-retry-mistakes');
+      const mistakesBadge = document.getElementById('results-mistakes-badge');
+      if (incorrect > 0) {
+        retryBtn.style.display = 'inline-flex';
+        mistakesBadge.innerText = incorrect;
+        renderMistakesReview(incorrect);
+      } else {
+        retryBtn.style.display = 'none';
+        document.getElementById('results-mistakes-container').style.display = 'none';
+      }
+    }
+
+    function renderMistakesReview(incorrectCount) {
+      const container = document.getElementById('results-mistakes-container');
+      const list = document.getElementById('results-mistakes-list');
+      
+      container.style.display = 'block';
+      list.innerHTML = '';
+      
+      state.quizAnswers.forEach(ans => {
+        if (ans.isCorrect) return; // Skip correct answers
+        
+        const qData = QUESTION_BANK.find(q => q.id === ans.questionId);
+        
+        const item = document.createElement('div');
+        item.className = 'mistake-item';
+        
+        item.innerHTML = `
+          <div class="mistake-q">${qData.q}</div>
+          <div class="mistake-ans-grid">
+            <div class="m-ans user"><strong>Ваша відповідь:</strong> ${qData.options[ans.chosenOptionIndex]}</div>
+            <div class="m-ans correct"><strong>Правильна:</strong> ${qData.options[qData.correct]}</div>
+          </div>
+          <div class="mistake-explanation">
+            <strong>Короткий конспект:</strong> ${qData.explanation}
+          </div>
+        `;
+        
+        list.appendChild(item);
+      });
+    }
+
+    function retryIncorrectQuestionsOnly() {
+      // Filter down questions to only the ones answered incorrectly
+      const incorrectIds = state.quizAnswers.filter(a => !a.isCorrect).map(a => a.questionId);
+      
+      if (incorrectIds.length === 0) return;
+      
+      // Gather original questions and shuffle
+      let pool = QUESTION_BANK.filter(q => incorrectIds.includes(q.id));
+      state.quizQuestions = shuffleArray([...pool]);
+      state.quizConfig.feedback = 'instant'; // Switch back to learning mode for mistakes review
+      
+      startQuizGameplay();
+    }
+
+    function restartQuizSetup() {
+      switchView('quiz');
+    }
+
+    // ----------------------------------------------------
+    // INITIALIZATION ON LOAD
+    // ----------------------------------------------------
+    window.onload = () => {
+      setGreeting();
+      loadStats();
+      renderDashboardThemes();
+    };
+  </script>
+</body>
+</html>
