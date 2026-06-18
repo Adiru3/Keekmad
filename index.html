@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Культурологія: Інтерактивний Тренажер & Вікторина</title>
+  <meta name="description" content="Інтерактивний тренажер, конспект лекцій та вікторина для підготовки до іспиту з культурології. Містить усі 8 тем та 88 питань з миттєвою перевіркою та безкоштовним аудіо-радіо фактами по колу.">
   
   <!-- Fonts and Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1101,6 +1102,75 @@
         font-size: 14px;
       }
     }
+    /* Audio visualizer wave bars styling */
+    .visualizer-waves {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 4px;
+      height: 40px;
+      width: 80px;
+      position: absolute;
+      bottom: 25px;
+    }
+    
+    .wave-bar {
+      width: 6px;
+      height: 5px;
+      background: var(--primary-grad);
+      border-radius: 3px;
+      animation: bounce 1s ease-in-out infinite;
+    }
+    
+    .wave-bar.bar1 { animation-delay: 0.1s; }
+    .wave-bar.bar2 { animation-delay: 0.3s; }
+    .wave-bar.bar3 { animation-delay: 0.5s; }
+    .wave-bar.bar4 { animation-delay: 0.2s; }
+    .wave-bar.bar5 { animation-delay: 0.4s; }
+    
+    @keyframes bounce {
+      0%, 100% { height: 5px; }
+      50% { height: 35px; }
+    }
+    
+    /* Animation for record spinning */
+    .spinning {
+      animation: spin 10s linear infinite;
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* TTS play buttons in study view */
+    .tts-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      margin-left: 10px;
+      font-size: 14px;
+      transition: var(--transition);
+      opacity: 0.6;
+    }
+    
+    .tts-btn:hover {
+      color: var(--accent);
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    
+    .tts-btn.speaking {
+      color: var(--success);
+      opacity: 1;
+      animation: pulse-green 1.5s infinite alternate;
+    }
+
+    @keyframes pulse-green {
+      from { text-shadow: 0 0 5px rgba(16, 185, 129, 0.4); }
+      to { text-shadow: 0 0 15px rgba(16, 185, 129, 0.8); }
+    }
   </style>
 </head>
 <body>
@@ -1127,6 +1197,9 @@
         </button>
         <button class="nav-btn" onclick="switchView('quiz')">
           <i class="fa-solid fa-circle-question"></i> Вікторина
+        </button>
+        <button class="nav-btn" onclick="switchView('audio')">
+          <i class="fa-solid fa-volume-high"></i> Радіо
         </button>
       </nav>
     </header>
@@ -1357,6 +1430,82 @@
         </div>
       </div>
 
+    </section>
+
+    <!-- 4. AUDIO RADIO VIEW -->
+    <section id="audio" class="view-section">
+      <div class="glass-card results-card" style="max-width: 700px; margin: 20px auto; padding: 35px 25px;">
+        <div class="audio-player-container" style="width: 100%; display: flex; flex-direction: column; gap: 20px; align-items: center;">
+          <!-- Visual vinyl/record spinning or wave animation -->
+          <div class="audio-visualizer-circle" id="audio-visualizer" style="width: 160px; height: 160px; border-radius: 50%; background: radial-gradient(circle, rgba(139, 92, 246, 0.2) 0%, rgba(99, 102, 241, 0.3) 100%); border: 6px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: center; align-items: center; box-shadow: var(--shadow-glow); position: relative; transition: var(--transition); overflow: hidden;">
+            <i class="fa-solid fa-radio" id="audio-visualizer-icon" style="font-size: 50px; color: #fff; transition: var(--transition);"></i>
+            <!-- Spinning border decoration -->
+            <div class="visualizer-waves" id="visualizer-waves" style="display: none;">
+              <span class="wave-bar bar1"></span>
+              <span class="wave-bar bar2"></span>
+              <span class="wave-bar bar3"></span>
+              <span class="wave-bar bar4"></span>
+              <span class="wave-bar bar5"></span>
+            </div>
+          </div>
+
+          <div style="text-align: center; width: 100%;">
+            <div id="audio-playing-status" style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--accent); font-weight: 700; margin-bottom: 5px;">Радіо вимкнено</div>
+            <h2 id="audio-current-theme" style="font-size: 16px; color: #fff; margin-bottom: 10px; font-weight: 600;">Оберіть тему та натисніть Play</h2>
+            <div id="audio-current-text-box" class="glass-card" style="background: rgba(0, 0, 0, 0.25); border: 1px solid var(--card-border); padding: 15px 20px; font-size: 15px; color: var(--text-secondary); text-align: left; min-height: 80px; max-height: 200px; overflow-y: auto; width: 100%; border-radius: var(--radius-md); transition: var(--transition);">
+              Тут буде з'являтися текст факту, який зараз звучить...
+            </div>
+          </div>
+
+          <!-- Controls panel -->
+          <div class="audio-controls-row" style="display: flex; gap: 15px; align-items: center; margin-top: 10px;">
+            <button class="btn btn-secondary" style="border-radius: 50%; width: 50px; height: 50px; padding: 0;" onclick="prevAudioFact()" title="Попередній факт">
+              <i class="fa-solid fa-backward-step"></i>
+            </button>
+            <button class="btn btn-primary" id="audio-play-btn" style="border-radius: 50%; width: 65px; height: 65px; padding: 0; font-size: 20px;" onclick="toggleAudioRadio()">
+              <i class="fa-solid fa-play" id="audio-play-icon"></i>
+            </button>
+            <button class="btn btn-secondary" style="border-radius: 50%; width: 50px; height: 50px; padding: 0;" onclick="nextAudioFact()" title="Наступний факт">
+              <i class="fa-solid fa-forward-step"></i>
+            </button>
+          </div>
+
+          <!-- Settings panel -->
+          <div class="audio-settings-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; margin-top: 10px; text-align: left;">
+            <div class="form-group">
+              <span class="form-label" style="font-size: 11px;">Фільтр тем:</span>
+              <select class="custom-select" id="audio-theme-filter" onchange="setupAudioPlaylist()">
+                <option value="all" selected>Всі теми разом</option>
+                <option value="1">Тема 1</option>
+                <option value="2">Тема 2</option>
+                <option value="3">Тема 3</option>
+                <option value="4">Тема 4</option>
+                <option value="5">Тема 5</option>
+                <option value="6">Тема 6</option>
+                <option value="7">Тема 7</option>
+                <option value="8">Тема 8</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <span class="form-label" style="font-size: 11px;">Швидкість читання:</span>
+              <select class="custom-select" id="audio-speed-select" onchange="changeAudioSpeed()">
+                <option value="0.8">Повільно (0.8x)</option>
+                <option value="1.0" selected>Нормальна (1.0x)</option>
+                <option value="1.2">Швидше (1.2x)</option>
+                <option value="1.5">Швидко (1.5x)</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="grid-column: span 2;">
+              <span class="form-label" style="font-size: 11px;">Голос (Voice):</span>
+              <select class="custom-select" id="audio-voice-select" style="width: 100%;" onchange="changeAudioVoice()">
+                <option value="">Завантаження голосів...</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Footer -->
@@ -2923,6 +3072,19 @@
         clearInterval(state.quizTimerInterval);
       }
       
+      // Stop study TTS if playing
+      window.speechSynthesis.cancel();
+      if (activeSpeechBtn) {
+        activeSpeechBtn.classList.remove('speaking');
+        activeSpeechBtn.querySelector('i').className = 'fa-solid fa-volume-high';
+        activeSpeechBtn = null;
+      }
+      
+      // Pause audio radio if switching to quiz
+      if (viewName === 'quiz') {
+        pauseAudioRadio();
+      }
+      
       state.currentView = viewName;
       
       // Toggle nav buttons active state
@@ -2948,6 +3110,11 @@
         renderStudyMain();
       } else if (viewName === 'quiz') {
         initQuizConfigUI();
+      } else if (viewName === 'audio') {
+        initVoices();
+        if (audioPlaylist.length === 0) {
+          setupAudioPlaylist();
+        }
       }
     }
 
@@ -3049,10 +3216,19 @@
         body.className = 'subtopic-body';
 
         topic.bullets.forEach(bullet => {
+          const cleanText = bullet.replace(/<[^>]*>/g, '').replace(/`/g, '\\`').replace(/"/g, '\\"');
           if (state.studyMode === 'reading') {
             const bp = document.createElement('div');
             bp.className = 'bullet-point';
-            bp.innerHTML = bullet;
+            bp.style.display = 'flex';
+            bp.style.justifyContent = 'space-between';
+            bp.style.alignItems = 'flex-start';
+            bp.innerHTML = `
+              <div style="flex-grow: 1;">${bullet}</div>
+              <button class="tts-btn" onclick="speakText(this, \`${cleanText}\`)" title="Слухати текст">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+            `;
             body.appendChild(bp);
           } else {
             // Flashcard container
@@ -3080,8 +3256,11 @@
                 <i class="fa-solid fa-eye" style="font-size: 20px; color: var(--primary)"></i>
                 <span>Натисніть, щоб відкрити відповідь</span>
               </div>
-              <div class="bullet-content">
-                <div class="bullet-point" style="padding-left: 0;">${bullet}</div>
+              <div class="bullet-content" style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
+                <div class="bullet-point" style="padding-left: 0; flex-grow: 1;">${bullet}</div>
+                <button class="tts-btn" onclick="event.stopPropagation(); speakText(this, \`${cleanText}\`)" title="Слухати текст">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
               </div>
             `;
             body.appendChild(container);
@@ -3461,12 +3640,438 @@
     }
 
     // ----------------------------------------------------
+    // TEXT TO SPEECH (TTS) & RADIO LOGIC
+    // ----------------------------------------------------
+    let activeSpeechBtn = null;
+    let audioPlaylist = [];
+    let currentAudioIndex = -1;
+    let isAudioRadioPlaying = false;
+    let selectedVoice = null;
+    let audioVoices = [];
+    let fallbackAudioElement = null;
+
+    // Helper to stop both browser SpeechSynthesis and background Google Audio TTS
+    function stopAllSpeech() {
+      window.speechSynthesis.cancel();
+      if (fallbackAudioElement) {
+        fallbackAudioElement.pause();
+        fallbackAudioElement.src = "";
+      }
+    }
+
+    // Google Translate TTS Fallback for Ukrainian
+    function playGoogleTTS(text, onendCallback, onerrorCallback) {
+      if (!fallbackAudioElement) {
+        fallbackAudioElement = document.createElement('audio');
+        document.body.appendChild(fallbackAudioElement);
+      }
+
+      // Google Translate TTS limit is 200 characters. We split long facts into chunks of 180 chars.
+      const chunks = [];
+      const maxLength = 180;
+      let remainingText = text.replace(/\s+/g, ' ').trim();
+
+      while (remainingText.length > 0) {
+        if (remainingText.length <= maxLength) {
+          chunks.push(remainingText);
+          break;
+        }
+
+        let splitIdx = -1;
+        const punctuation = ['.', ',', ';', ':', '!', '?'];
+        
+        for (let i = maxLength; i > maxLength - 50 && i > 0; i--) {
+          if (punctuation.includes(remainingText[i])) {
+            splitIdx = i + 1;
+            break;
+          }
+        }
+
+        if (splitIdx === -1) {
+          for (let i = maxLength; i > maxLength - 50 && i > 0; i--) {
+            if (remainingText[i] === ' ') {
+              splitIdx = i;
+              break;
+            }
+          }
+        }
+
+        if (splitIdx === -1) {
+          splitIdx = maxLength;
+        }
+
+        chunks.push(remainingText.substring(0, splitIdx).trim());
+        remainingText = remainingText.substring(splitIdx).trim();
+      }
+
+      let currentChunkIdx = 0;
+
+      function playNextChunk() {
+        if (currentChunkIdx >= chunks.length) {
+          if (onendCallback) onendCallback();
+          return;
+        }
+
+        const chunk = chunks[currentChunkIdx];
+        const url = "https://translate.google.com/translate_tts?ie=UTF-8&tl=uk&client=tw-ob&q=" + encodeURIComponent(chunk);
+        
+        fallbackAudioElement.src = url;
+
+        // Apply speed select
+        const speedSelect = document.getElementById('audio-speed-select');
+        if (speedSelect) {
+          const rate = parseFloat(speedSelect.value);
+          fallbackAudioElement.defaultPlaybackRate = rate;
+          fallbackAudioElement.playbackRate = rate;
+        } else {
+          fallbackAudioElement.defaultPlaybackRate = 1.0;
+          fallbackAudioElement.playbackRate = 1.0;
+        }
+
+        fallbackAudioElement.onended = () => {
+          currentChunkIdx++;
+          playNextChunk();
+        };
+
+        fallbackAudioElement.onerror = (e) => {
+          console.error("Google Translate TTS playback error:", e);
+          if (onerrorCallback) onerrorCallback(e);
+        };
+
+        fallbackAudioElement.play().catch(err => {
+          console.error("Audio playback promise rejected:", err);
+          if (onerrorCallback) onerrorCallback(err);
+        });
+      }
+
+      playNextChunk();
+    }
+
+    function speakText(btn, text) {
+      if (isAudioRadioPlaying) {
+        pauseAudioRadio();
+      }
+
+      stopAllSpeech();
+
+      if (btn && btn.classList.contains('speaking')) {
+        btn.classList.remove('speaking');
+        btn.querySelector('i').className = 'fa-solid fa-volume-high';
+        activeSpeechBtn = null;
+        return;
+      }
+
+      if (activeSpeechBtn) {
+        activeSpeechBtn.classList.remove('speaking');
+        activeSpeechBtn.querySelector('i').className = 'fa-solid fa-volume-high';
+      }
+
+      activeSpeechBtn = btn;
+      if (btn) {
+        btn.classList.add('speaking');
+        btn.querySelector('i').className = 'fa-solid fa-volume-xmark';
+      }
+
+      const voices = window.speechSynthesis.getVoices();
+      const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
+
+      const onEnd = () => {
+        if (btn) {
+          btn.classList.remove('speaking');
+          btn.querySelector('i').className = 'fa-solid fa-volume-high';
+        }
+        if (activeSpeechBtn === btn) {
+          activeSpeechBtn = null;
+        }
+      };
+
+      const onError = () => {
+        if (btn) {
+          btn.classList.remove('speaking');
+          btn.querySelector('i').className = 'fa-solid fa-volume-high';
+        }
+        if (activeSpeechBtn === btn) {
+          activeSpeechBtn = null;
+        }
+      };
+
+      if (ukVoice) {
+        // Native browser TTS
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.voice = ukVoice;
+        
+        const speedSelect = document.getElementById('audio-speed-select');
+        utterance.rate = speedSelect ? parseFloat(speedSelect.value) : 1.0;
+        
+        utterance.onend = onEnd;
+        utterance.onerror = onError;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        // Online fallback TTS
+        playGoogleTTS(text, onEnd, onError);
+      }
+    }
+
+    function initVoices() {
+      const allVoices = window.speechSynthesis.getVoices();
+      const select = document.getElementById('audio-voice-select');
+      if (!select) return;
+      
+      select.innerHTML = '';
+      
+      // Filter strictly to Ukrainian voices
+      audioVoices = allVoices.filter(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
+
+      if (audioVoices.length === 0) {
+        select.innerHTML = '<option value="online">🇺🇦 Google Cloud TTS (Інтернет-озвучка)</option>';
+        selectedVoice = null;
+        
+        // Update to friendly online status instead of error
+        document.getElementById('audio-playing-status').innerText = "Радіо вимкнено (Онлайн)";
+        document.getElementById('audio-playing-status').style.color = "var(--text-secondary)";
+        document.getElementById('audio-current-theme').innerText = "Оберіть тему та натисніть Play";
+        document.getElementById('audio-current-text-box').innerText = "Тут буде з'являтися текст факту, який зараз звучить...";
+        return;
+      }
+
+      audioVoices.forEach((voice, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.text = `🇺🇦 ${voice.name} (${voice.lang})`;
+        
+        if (index === 0) {
+          option.selected = true;
+          selectedVoice = voice;
+        }
+        
+        select.appendChild(option);
+      });
+    }
+
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = initVoices;
+    }
+
+    function changeAudioVoice() {
+      const voiceSelect = document.getElementById('audio-voice-select');
+      if (voiceSelect && voiceSelect.value !== "" && voiceSelect.value !== "online" && audioVoices.length > 0) {
+        selectedVoice = audioVoices[parseInt(voiceSelect.value)];
+      }
+      if (isAudioRadioPlaying) {
+        playCurrentFact();
+      }
+    }
+
+    function changeAudioSpeed() {
+      if (isAudioRadioPlaying) {
+        playCurrentFact();
+      }
+    }
+
+    function setupAudioPlaylist() {
+      const filter = document.getElementById('audio-theme-filter').value;
+      audioPlaylist = [];
+      
+      STUDY_MATERIALS.forEach(theme => {
+        if (filter === 'all' || filter === theme.themeNum.toString()) {
+          theme.topics.forEach(topic => {
+            topic.bullets.forEach(bullet => {
+              const cleanText = bullet.replace(/<[^>]*>/g, '').trim();
+              audioPlaylist.push({
+                themeNum: theme.themeNum,
+                themeTitle: theme.themeTitle,
+                topicTitle: topic.title,
+                text: cleanText
+              });
+            });
+          });
+        }
+      });
+
+      audioPlaylist = shuffleArray([...audioPlaylist]);
+      currentAudioIndex = 0;
+      
+      if (isAudioRadioPlaying) {
+        playCurrentFact();
+      }
+    }
+
+    function toggleAudioRadio() {
+      if (isAudioRadioPlaying) {
+        pauseAudioRadio();
+      } else {
+        startAudioRadio();
+      }
+    }
+
+    function startAudioRadio() {
+      if (audioPlaylist.length === 0) {
+        setupAudioPlaylist();
+      }
+      
+      isAudioRadioPlaying = true;
+      document.getElementById('audio-play-icon').className = 'fa-solid fa-pause';
+      
+      const voices = window.speechSynthesis.getVoices();
+      const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
+      if (ukVoice) {
+        document.getElementById('audio-playing-status').innerText = "Радіо грає...";
+      } else {
+        document.getElementById('audio-playing-status').innerText = "Радіо грає (Онлайн)...";
+      }
+      document.getElementById('audio-playing-status').style.color = "var(--accent)";
+      
+      document.getElementById('audio-visualizer-icon').className = 'fa-solid fa-compact-disc spinning';
+      document.getElementById('visualizer-waves').style.display = 'flex';
+      
+      playCurrentFact();
+    }
+
+    function pauseAudioRadio() {
+      isAudioRadioPlaying = false;
+      stopAllSpeech();
+      document.getElementById('audio-play-icon').className = 'fa-solid fa-play';
+      
+      const voices = window.speechSynthesis.getVoices();
+      const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
+      if (ukVoice) {
+        document.getElementById('audio-playing-status').innerText = "Радіо вимкнено";
+      } else {
+        document.getElementById('audio-playing-status').innerText = "Радіо вимкнено (Онлайн)";
+      }
+      document.getElementById('audio-playing-status').style.color = "var(--text-secondary)";
+      
+      document.getElementById('audio-visualizer-icon').className = 'fa-solid fa-radio';
+      document.getElementById('audio-visualizer-icon').classList.remove('spinning');
+      document.getElementById('visualizer-waves').style.display = 'none';
+    }
+
+    function playCurrentFact() {
+      if (!isAudioRadioPlaying) return;
+      if (audioPlaylist.length === 0) return;
+      
+      if (currentAudioIndex >= audioPlaylist.length) {
+        currentAudioIndex = 0;
+        audioPlaylist = shuffleArray([...audioPlaylist]);
+      }
+      
+      if (currentAudioIndex < 0) {
+        currentAudioIndex = audioPlaylist.length - 1;
+      }
+      
+      const fact = audioPlaylist[currentAudioIndex];
+      
+      document.getElementById('audio-current-theme').innerText = `Тема ${fact.themeNum}: ${fact.topicTitle}`;
+      document.getElementById('audio-current-text-box').innerText = fact.text;
+      
+      stopAllSpeech();
+      
+      const voices = window.speechSynthesis.getVoices();
+      const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
+
+      const onEnd = () => {
+        if (isAudioRadioPlaying) {
+          currentAudioIndex++;
+          playCurrentFact();
+        }
+      };
+
+      const onError = (e) => {
+        console.warn("Speech error, moving next:", e);
+        if (isAudioRadioPlaying) {
+          currentAudioIndex++;
+          setTimeout(playCurrentFact, 500);
+        }
+      };
+
+      if (ukVoice) {
+        // Native Speech Synthesis
+        const utterance = new SpeechSynthesisUtterance(fact.text);
+        
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        } else {
+          utterance.voice = ukVoice;
+        }
+
+        const speedSelect = document.getElementById('audio-speed-select');
+        if (speedSelect) {
+          utterance.rate = parseFloat(speedSelect.value);
+        }
+
+        utterance.onend = onEnd;
+        utterance.onerror = onError;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        // Fallback to online Google Translate TTS
+        playGoogleTTS(fact.text, onEnd, onError);
+      }
+    }
+
+    function prevAudioFact() {
+      if (audioPlaylist.length === 0) {
+        setupAudioPlaylist();
+      }
+      currentAudioIndex--;
+      if (currentAudioIndex < 0) {
+        currentAudioIndex = audioPlaylist.length - 1;
+      }
+      
+      if (!isAudioRadioPlaying) {
+        isAudioRadioPlaying = true;
+        document.getElementById('audio-play-icon').className = 'fa-solid fa-pause';
+        
+        const voices = window.speechSynthesis.getVoices();
+        const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
+        if (ukVoice) {
+          document.getElementById('audio-playing-status').innerText = "Радіо грає...";
+        } else {
+          document.getElementById('audio-playing-status').innerText = "Радіо грає (Онлайн)...";
+        }
+        
+        document.getElementById('audio-visualizer-icon').className = 'fa-solid fa-compact-disc spinning';
+        document.getElementById('visualizer-waves').style.display = 'flex';
+      }
+      
+      playCurrentFact();
+    }
+
+    function nextAudioFact() {
+      if (audioPlaylist.length === 0) {
+        setupAudioPlaylist();
+      }
+      currentAudioIndex++;
+      if (currentAudioIndex >= audioPlaylist.length) {
+        currentAudioIndex = 0;
+      }
+      
+      if (!isAudioRadioPlaying) {
+        isAudioRadioPlaying = true;
+        document.getElementById('audio-play-icon').className = 'fa-solid fa-pause';
+        
+        const voices = window.speechSynthesis.getVoices();
+        const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
+        if (ukVoice) {
+          document.getElementById('audio-playing-status').innerText = "Радіо грає...";
+        } else {
+          document.getElementById('audio-playing-status').innerText = "Радіо грає (Онлайн)...";
+        }
+        
+        document.getElementById('audio-visualizer-icon').className = 'fa-solid fa-compact-disc spinning';
+        document.getElementById('visualizer-waves').style.display = 'flex';
+      }
+      
+      playCurrentFact();
+    }
+
+    // ----------------------------------------------------
     // INITIALIZATION ON LOAD
     // ----------------------------------------------------
     window.onload = () => {
       setGreeting();
       loadStats();
       renderDashboardThemes();
+      setTimeout(initVoices, 500);
     };
   </script>
 </body>
