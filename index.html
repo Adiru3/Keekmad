@@ -3354,7 +3354,7 @@
         const body = document.createElement('div');
         body.className = 'subtopic-body';
 
-        topic.bullets.forEach(bullet => {
+        topic.bullets.forEach((bullet, bulletIdx) => {
           const cleanText = bullet.replace(/<[^>]*>/g, '').replace(/`/g, '\\`').replace(/"/g, '\\"');
           if (state.studyMode === 'reading') {
             const bp = document.createElement('div');
@@ -3364,7 +3364,7 @@
             bp.style.alignItems = 'flex-start';
             bp.innerHTML = `
               <div style="flex-grow: 1;">${bullet}</div>
-              <button class="tts-btn" onclick="speakText(this, \`${cleanText}\`)" title="Слухати текст">
+              <button class="tts-btn" onclick="speakText(this, \`${cleanText}\`, ${theme.themeNum}, ${topic.num}, ${bulletIdx})" title="Слухати текст">
                 <i class="fa-solid fa-volume-high"></i>
               </button>
             `;
@@ -3397,7 +3397,7 @@
               </div>
               <div class="bullet-content" style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%;">
                 <div class="bullet-point" style="padding-left: 0; flex-grow: 1;">${bullet}</div>
-                <button class="tts-btn" onclick="event.stopPropagation(); speakText(this, \`${cleanText}\`)" title="Слухати текст">
+                <button class="tts-btn" onclick="event.stopPropagation(); speakText(this, \`${cleanText}\`, ${theme.themeNum}, ${topic.num}, ${bulletIdx})" title="Слухати текст">
                   <i class="fa-solid fa-volume-high"></i>
                 </button>
               </div>
@@ -3886,9 +3886,93 @@
       playNextChunk();
     }
 
-    function speakText(btn, text) {
+    // Offline-first audio player with transparent TTS fallback
+    function playAudioFact(text, themeNum, topicNum, bulletIdx, onEnd, onError, speed) {
+      stopAllSpeech();
+      
+      const hasLocal = (themeNum !== undefined && topicNum !== undefined && bulletIdx !== undefined);
+      
+      if (hasLocal) {
+        if (!fallbackAudioElement) {
+          fallbackAudioElement = document.createElement('audio');
+          document.body.appendChild(fallbackAudioElement);
+        }
+        
+        fallbackAudioElement.src = `audio/bullet_${themeNum}_${topicNum}_${bulletIdx}.mp3`;
+        
+        // Clean up previous event handlers
+        fallbackAudioElement.onended = null;
+        fallbackAudioElement.onerror = null;
+        
+        // Set speed
+        const speedVal = speed || 1.0;
+        fallbackAudioElement.defaultPlaybackRate = speedVal;
+        fallbackAudioElement.playbackRate = speedVal;
+        
+        let errorTriggered = false;
+        
+        fallbackAudioElement.onended = () => {
+          if (!errorTriggered) {
+            fallbackAudioElement.onended = null;
+            fallbackAudioElement.onerror = null;
+            if (onEnd) onEnd();
+          }
+        };
+        
+        fallbackAudioElement.onerror = (e) => {
+          errorTriggered = true;
+          fallbackAudioElement.onended = null;
+          fallbackAudioElement.onerror = null;
+          console.warn(`Local audio file not found or failed, falling back to TTS: audio/bullet_${themeNum}_${topicNum}_${bulletIdx}.mp3`, e);
+          playTTSFallback(text, onEnd, onError, speedVal);
+        };
+        
+        fallbackAudioElement.play().catch(err => {
+          errorTriggered = true;
+          fallbackAudioElement.onended = null;
+          fallbackAudioElement.onerror = null;
+          console.warn("Local audio playback blocked or failed, falling back to TTS", err);
+          playTTSFallback(text, onEnd, onError, speedVal);
+        });
+      } else {
+        playTTSFallback(text, onEnd, onError, speed || 1.0);
+      }
+    }
+
+    function playTTSFallback(text, onEnd, onError, speed) {
+      const voices = window.speechSynthesis.getVoices();
+      const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
+      
+      if (ukVoice) {
+        // Native Speech Synthesis
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        // Find if user selected a custom voice
+        const voiceSelect = document.getElementById('audiobook-voice-select') || document.getElementById('audio-voice-select');
+        if (voiceSelect && voiceSelect.value !== "" && voiceSelect.value !== "online" && audioVoices && audioVoices.length > 0) {
+          utterance.voice = audioVoices[parseInt(voiceSelect.value)];
+        } else if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        } else {
+          utterance.voice = ukVoice;
+        }
+        
+        utterance.rate = speed || 1.0;
+        utterance.onend = onEnd;
+        utterance.onerror = onError;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        // Online fallback TTS
+        playGoogleTTS(text, onEnd, onError);
+      }
+    }
+
+    function speakText(btn, text, themeNum, topicNum, bulletIdx) {
       if (isAudioRadioPlaying) {
         pauseAudioRadio();
+      }
+      if (isAudiobookPlaying) {
+        pauseAudiobook();
       }
 
       stopAllSpeech();
@@ -3911,9 +3995,6 @@
         btn.querySelector('i').className = 'fa-solid fa-volume-xmark';
       }
 
-      const voices = window.speechSynthesis.getVoices();
-      const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
-
       const onEnd = () => {
         if (btn) {
           btn.classList.remove('speaking');
@@ -3934,21 +4015,10 @@
         }
       };
 
-      if (ukVoice) {
-        // Native browser TTS
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.voice = ukVoice;
-        
-        const speedSelect = document.getElementById('audio-speed-select');
-        utterance.rate = speedSelect ? parseFloat(speedSelect.value) : 1.0;
-        
-        utterance.onend = onEnd;
-        utterance.onerror = onError;
-        window.speechSynthesis.speak(utterance);
-      } else {
-        // Online fallback TTS
-        playGoogleTTS(text, onEnd, onError);
-      }
+      const speedSelect = document.getElementById('audiobook-speed-select') || document.getElementById('audio-speed-select');
+      const rate = speedSelect ? parseFloat(speedSelect.value) : 1.0;
+
+      playAudioFact(text, themeNum, topicNum, bulletIdx, onEnd, onError, rate);
     }
 
     function initVoices() {
@@ -4037,12 +4107,14 @@
       STUDY_MATERIALS.forEach(theme => {
         if (filter === 'all' || filter === theme.themeNum.toString()) {
           theme.topics.forEach(topic => {
-            topic.bullets.forEach(bullet => {
+            topic.bullets.forEach((bullet, bulletIdx) => {
               const cleanText = bullet.replace(/<[^>]*>/g, '').trim();
               audioPlaylist.push({
                 themeNum: theme.themeNum,
                 themeTitle: theme.themeTitle,
+                topicNum: topic.num,
                 topicTitle: topic.title,
+                bulletIdx: bulletIdx,
                 text: cleanText
               });
             });
@@ -4108,7 +4180,7 @@
       document.getElementById('visualizer-waves').style.display = 'none';
     }
 
-    function playCurrentFact() {
+        function playCurrentFact() {
       if (!isAudioRadioPlaying) return;
       if (audioPlaylist.length === 0) return;
       
@@ -4128,9 +4200,6 @@
       
       stopAllSpeech();
       
-      const voices = window.speechSynthesis.getVoices();
-      const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
-
       let speechStartTime = Date.now();
 
       const onEnd = () => {
@@ -4159,28 +4228,10 @@
         }
       };
 
-      if (ukVoice) {
-        // Native Speech Synthesis
-        const utterance = new SpeechSynthesisUtterance(fact.text);
-        
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
-        } else {
-          utterance.voice = ukVoice;
-        }
+      const speedSelect = document.getElementById('audio-speed-select');
+      const rate = speedSelect ? parseFloat(speedSelect.value) : 1.0;
 
-        const speedSelect = document.getElementById('audio-speed-select');
-        if (speedSelect) {
-          utterance.rate = parseFloat(speedSelect.value);
-        }
-
-        utterance.onend = onEnd;
-        utterance.onerror = onError;
-        window.speechSynthesis.speak(utterance);
-      } else {
-        // Fallback to online Google Translate TTS
-        playGoogleTTS(fact.text, onEnd, onError);
-      }
+      playAudioFact(fact.text, fact.themeNum, fact.topicNum, fact.bulletIdx, onEnd, onError, rate);
     }
 
     function prevAudioFact() {
@@ -4388,7 +4439,7 @@
       }
     }
 
-    function playCurrentAudiobookFact() {
+        function playCurrentAudiobookFact() {
       if (!isAudiobookPlaying) return;
       if (audiobookPlaylist.length === 0) return;
       
@@ -4417,9 +4468,6 @@
       
       stopAllSpeech();
       
-      const voices = window.speechSynthesis.getVoices();
-      const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
-
       let speechStartTime = Date.now();
 
       const onEnd = () => {
@@ -4448,32 +4496,10 @@
         }
       };
 
-      if (ukVoice) {
-        // Native Speech Synthesis
-        const utterance = new SpeechSynthesisUtterance(fact.text);
-        
-        // Voice selection
-        const voiceSelect = document.getElementById('audiobook-voice-select');
-        if (voiceSelect && voiceSelect.value !== "" && voiceSelect.value !== "online" && audioVoices.length > 0) {
-          utterance.voice = audioVoices[parseInt(voiceSelect.value)];
-        } else if (selectedVoice) {
-          utterance.voice = selectedVoice;
-        } else {
-          utterance.voice = ukVoice;
-        }
+      const speedSelect = document.getElementById('audiobook-speed-select');
+      const rate = speedSelect ? parseFloat(speedSelect.value) : 1.0;
 
-        const speedSelect = document.getElementById('audiobook-speed-select');
-        if (speedSelect) {
-          utterance.rate = parseFloat(speedSelect.value);
-        }
-
-        utterance.onend = onEnd;
-        utterance.onerror = onError;
-        window.speechSynthesis.speak(utterance);
-      } else {
-        // Fallback to online Google Translate TTS
-        playGoogleTTS(fact.text, onEnd, onError);
-      }
+      playAudioFact(fact.text, fact.themeNum, fact.topicNum, fact.bulletIdx, onEnd, onError, rate);
     }
 
     function prevAudiobookFact() {
