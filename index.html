@@ -1171,6 +1171,51 @@
       from { text-shadow: 0 0 5px rgba(16, 185, 129, 0.4); }
       to { text-shadow: 0 0 15px rgba(16, 185, 129, 0.8); }
     }
+
+    /* Audiobook View Styles */
+    .audiobook-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: calc(100vh - 280px);
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+    
+    .audiobook-item {
+      padding: 15px 18px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .audiobook-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateX(3px);
+    }
+    
+    .audiobook-item.active {
+      background: rgba(139, 92, 246, 0.1);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-glow);
+    }
+    
+    .audiobook-item .bullet-indicator {
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-size: 12px;
+      transition: var(--transition);
+    }
+    
+    .audiobook-item.active .bullet-indicator {
+      color: var(--accent);
+    }
   </style>
 </head>
 <body>
@@ -1200,6 +1245,9 @@
         </button>
         <button class="nav-btn" onclick="switchView('audio')">
           <i class="fa-solid fa-volume-high"></i> Радіо
+        </button>
+        <button class="nav-btn" onclick="switchView('audiobook')">
+          <i class="fa-solid fa-book-open-reader"></i> Аудіокнига
         </button>
       </nav>
     </header>
@@ -1502,6 +1550,83 @@
               <select class="custom-select" id="audio-voice-select" style="width: 100%;" onchange="changeAudioVoice()">
                 <option value="">Завантаження голосів...</option>
               </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. AUDIOBOOK VIEW -->
+    <section id="audiobook" class="view-section">
+      <div class="study-layout">
+        <!-- Sidebar Controls -->
+        <div class="glass-card study-sidebar" style="max-height: none; position: sticky; top: 20px;">
+          <h3 style="font-size: 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-book-open-reader" style="color: var(--accent);"></i> Аудіокнига
+          </h3>
+          <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 15px;">Послідовне прослуховування всього конспекту лекцій.</p>
+          
+          <div class="form-group">
+            <span class="form-label" style="font-size: 11px;">Вибір теми:</span>
+            <select class="custom-select" id="audiobook-theme-select" onchange="setupAudiobookPlaylist(); renderAudiobookList();">
+              <option value="all" selected>Весь конспект (Теми 1-8)</option>
+              <option value="1">Тема 1</option>
+              <option value="2">Тема 2</option>
+              <option value="3">Тема 3</option>
+              <option value="4">Тема 4</option>
+              <option value="5">Тема 5</option>
+              <option value="6">Тема 6</option>
+              <option value="7">Тема 7</option>
+              <option value="8">Тема 8</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <span class="form-label" style="font-size: 11px;">Голос (Voice):</span>
+            <select class="custom-select" id="audiobook-voice-select" style="width: 100%;" onchange="changeAudiobookVoice()">
+              <option value="online">🇺🇦 Google Cloud TTS (Інтернет-озвучка)</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <span class="form-label" style="font-size: 11px;">Швидкість:</span>
+            <select class="custom-select" id="audiobook-speed-select" onchange="changeAudiobookSpeed()">
+              <option value="0.8">Повільно (0.8x)</option>
+              <option value="1.0" selected>Нормальна (1.0x)</option>
+              <option value="1.2">Швидше (1.2x)</option>
+              <option value="1.5">Швидко (1.5x)</option>
+            </select>
+          </div>
+
+          <!-- Controls panel -->
+          <div class="audiobook-controls" style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px; align-items: center; width: 100%;">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--accent); font-weight: 700;" id="audiobook-status">Вимкнено</div>
+            
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <button class="btn btn-secondary" style="border-radius: 50%; width: 42px; height: 42px; padding: 0;" onclick="prevAudiobookFact()" title="Назад">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <button class="btn btn-primary" id="audiobook-play-btn" style="border-radius: 50%; width: 55px; height: 55px; padding: 0; font-size: 18px;" onclick="toggleAudiobook()">
+                <i class="fa-solid fa-play" id="audiobook-play-icon"></i>
+              </button>
+              <button class="btn btn-secondary" style="border-radius: 50%; width: 42px; height: 42px; padding: 0;" onclick="nextAudiobookFact()" title="Вперед">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+            
+            <div id="audiobook-progress-text" style="font-size: 12px; color: var(--text-secondary);">Факт 0 з 0</div>
+          </div>
+        </div>
+
+        <!-- Outline List Panel -->
+        <div class="study-main">
+          <div class="glass-card" style="padding: 20px;">
+            <h3 style="font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-list-ol" style="color: var(--primary);"></i> Текст конспекту для читання
+            </h3>
+            
+            <div class="audiobook-list" id="audiobook-playlist-container">
+              <!-- Rendered Dynamically -->
             </div>
           </div>
         </div>
@@ -3054,6 +3179,13 @@
       document.getElementById('stats-cards-viewed').innerText = `${viewedCount} / ${totalCards}`;
     }
 
+    function updateAudiobookProgressUI() {
+      const progressText = document.getElementById('audiobook-progress-text');
+      if (progressText) {
+        progressText.innerText = `Факт ${currentAudiobookIndex + 1} з ${audiobookPlaylist.length}`;
+      }
+    }
+
     // Set Greeting based on time
     function setGreeting() {
       const hour = new Date().getHours();
@@ -3072,17 +3204,20 @@
         clearInterval(state.quizTimerInterval);
       }
       
-      // Stop study TTS if playing
-      window.speechSynthesis.cancel();
+      // Stop all speech (system and online fallbacks)
+      stopAllSpeech();
       if (activeSpeechBtn) {
         activeSpeechBtn.classList.remove('speaking');
         activeSpeechBtn.querySelector('i').className = 'fa-solid fa-volume-high';
         activeSpeechBtn = null;
       }
       
-      // Pause audio radio if switching to quiz
-      if (viewName === 'quiz') {
+      // Pause active voice players based on views
+      if (viewName !== 'audio') {
         pauseAudioRadio();
+      }
+      if (viewName !== 'audiobook') {
+        pauseAudiobook();
       }
       
       state.currentView = viewName;
@@ -3115,6 +3250,10 @@
         if (audioPlaylist.length === 0) {
           setupAudioPlaylist();
         }
+      } else if (viewName === 'audiobook') {
+        initVoices();
+        setupAudiobookPlaylist();
+        renderAudiobookList();
       }
     }
 
@@ -3814,16 +3953,20 @@
 
     function initVoices() {
       const allVoices = window.speechSynthesis.getVoices();
-      const select = document.getElementById('audio-voice-select');
-      if (!select) return;
+      const radioSelect = document.getElementById('audio-voice-select');
+      const bookSelect = document.getElementById('audiobook-voice-select');
+      if (!radioSelect) return;
       
-      select.innerHTML = '';
+      radioSelect.innerHTML = '';
+      if (bookSelect) bookSelect.innerHTML = '';
       
       // Filter strictly to Ukrainian voices
       audioVoices = allVoices.filter(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
 
       if (audioVoices.length === 0) {
-        select.innerHTML = '<option value="online">🇺🇦 Google Cloud TTS (Інтернет-озвучка)</option>';
+        const onlineOpt = '<option value="online">🇺🇦 Google Cloud TTS (Інтернет-озвучка)</option>';
+        radioSelect.innerHTML = onlineOpt;
+        if (bookSelect) bookSelect.innerHTML = onlineOpt;
         selectedVoice = null;
         
         // Update to friendly online status instead of error
@@ -3831,6 +3974,11 @@
         document.getElementById('audio-playing-status').style.color = "var(--text-secondary)";
         document.getElementById('audio-current-theme').innerText = "Оберіть тему та натисніть Play";
         document.getElementById('audio-current-text-box').innerText = "Тут буде з'являтися текст факту, який зараз звучить...";
+        
+        if (document.getElementById('audiobook-status')) {
+          document.getElementById('audiobook-status').innerText = "Вимкнено (Онлайн)";
+          document.getElementById('audiobook-status').style.color = "var(--text-secondary)";
+        }
         return;
       }
 
@@ -3838,13 +3986,20 @@
         const option = document.createElement('option');
         option.value = index;
         option.text = `🇺🇦 ${voice.name} (${voice.lang})`;
+        radioSelect.appendChild(option);
+        
+        if (bookSelect) {
+          const option2 = document.createElement('option');
+          option2.value = index;
+          option2.text = `🇺🇦 ${voice.name} (${voice.lang})`;
+          bookSelect.appendChild(option2);
+        }
         
         if (index === 0) {
           option.selected = true;
+          if (bookSelect && bookSelect.options[0]) bookSelect.options[0].selected = true;
           selectedVoice = voice;
         }
-        
-        select.appendChild(option);
       });
     }
 
@@ -3856,6 +4011,8 @@
       const voiceSelect = document.getElementById('audio-voice-select');
       if (voiceSelect && voiceSelect.value !== "" && voiceSelect.value !== "online" && audioVoices.length > 0) {
         selectedVoice = audioVoices[parseInt(voiceSelect.value)];
+        const bookVoiceSelect = document.getElementById('audiobook-voice-select');
+        if (bookVoiceSelect) bookVoiceSelect.value = voiceSelect.value;
       }
       if (isAudioRadioPlaying) {
         playCurrentFact();
@@ -3863,6 +4020,11 @@
     }
 
     function changeAudioSpeed() {
+      const speedSelect = document.getElementById('audio-speed-select');
+      const bookSpeedSelect = document.getElementById('audiobook-speed-select');
+      if (speedSelect && bookSpeedSelect) {
+        bookSpeedSelect.value = speedSelect.value;
+      }
       if (isAudioRadioPlaying) {
         playCurrentFact();
       }
@@ -3969,18 +4131,31 @@
       const voices = window.speechSynthesis.getVoices();
       const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
 
+      let speechStartTime = Date.now();
+
       const onEnd = () => {
         if (isAudioRadioPlaying) {
           currentAudioIndex++;
-          playCurrentFact();
+          setTimeout(playCurrentFact, 1200); // 1.2s break between facts
         }
       };
 
       const onError = (e) => {
-        console.warn("Speech error, moving next:", e);
+        console.warn("Speech error:", e);
         if (isAudioRadioPlaying) {
-          currentAudioIndex++;
-          setTimeout(playCurrentFact, 500);
+          const duration = Date.now() - speechStartTime;
+          if (duration < 250) {
+            console.error("Instant skip/error detected. Pausing to prevent loop.");
+            pauseAudioRadio();
+            if (window.location.protocol === 'file:') {
+              alert("Помилка відтворення голосу.\n\nОскільки сторінка відкрита локально як файл (file://), ваш браузер блокує інтернет-озвучку через політику безпеки CORS.\n\nЩоб це виправити, ви можете:\n1. Завантажити проект на GitHub Pages (там все працюватиме автоматично).\n2. Або встановити український мовний пакет у налаштуваннях Windows (Час та мова -> Мовлення -> Додати голоси -> Українська), щоб озвучка працювала повністю офлайн.");
+            } else {
+              alert("Помилка відтворення голосу. Будь ласка, оберіть інший голос у налаштуваннях, перевірте з'єднання з Інтернетом або перезапустіть сторінку.");
+            }
+          } else {
+            currentAudioIndex++;
+            setTimeout(playCurrentFact, 1000);
+          }
         }
       };
 
@@ -4036,32 +4211,291 @@
       playCurrentFact();
     }
 
-    function nextAudioFact() {
-      if (audioPlaylist.length === 0) {
-        setupAudioPlaylist();
-      }
-      currentAudioIndex++;
-      if (currentAudioIndex >= audioPlaylist.length) {
-        currentAudioIndex = 0;
-      }
+    // Audiobook state
+    let audiobookPlaylist = [];
+    let currentAudiobookIndex = -1;
+    let isAudiobookPlaying = false;
+
+    function setupAudiobookPlaylist() {
+      const filterSelect = document.getElementById('audiobook-theme-select');
+      const filter = filterSelect ? filterSelect.value : 'all';
+      audiobookPlaylist = [];
       
-      if (!isAudioRadioPlaying) {
-        isAudioRadioPlaying = true;
-        document.getElementById('audio-play-icon').className = 'fa-solid fa-pause';
-        
-        const voices = window.speechSynthesis.getVoices();
-        const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
-        if (ukVoice) {
-          document.getElementById('audio-playing-status').innerText = "Радіо грає...";
-        } else {
-          document.getElementById('audio-playing-status').innerText = "Радіо грає (Онлайн)...";
+      STUDY_MATERIALS.forEach(theme => {
+        if (filter === 'all' || filter === theme.themeNum.toString()) {
+          theme.topics.forEach(topic => {
+            topic.bullets.forEach((bullet, bulletIdx) => {
+              const cleanText = bullet.replace(/<[^>]*>/g, '').trim();
+              audiobookPlaylist.push({
+                themeNum: theme.themeNum,
+                themeTitle: theme.themeTitle,
+                topicNum: topic.num,
+                topicTitle: topic.title,
+                bulletIdx: bulletIdx,
+                bulletHtml: bullet,
+                text: cleanText
+              });
+            });
+          });
         }
+      });
+      
+      if (currentAudiobookIndex < 0 || currentAudiobookIndex >= audiobookPlaylist.length) {
+        currentAudiobookIndex = 0;
+      }
+      updateAudiobookProgressUI();
+    }
+
+    function renderAudiobookList() {
+      const container = document.getElementById('audiobook-playlist-container');
+      if (!container) return;
+      
+      container.innerHTML = '';
+      
+      audiobookPlaylist.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = `audiobook-item ${index === currentAudiobookIndex ? 'active' : ''}`;
+        div.id = `audiobook-item-${index}`;
+        div.onclick = () => {
+          selectAudiobookFact(index);
+        };
         
-        document.getElementById('audio-visualizer-icon').className = 'fa-solid fa-compact-disc spinning';
-        document.getElementById('visualizer-waves').style.display = 'flex';
+        div.innerHTML = `
+          <div class="bullet-indicator">
+            <i class="fa-solid ${index === currentAudiobookIndex && isAudiobookPlaying ? 'fa-circle-play fa-spin' : 'fa-circle'}"></i>
+          </div>
+          <div style="flex-grow: 1;">
+            <div style="font-size: 10px; color: var(--accent); text-transform: uppercase; font-weight: 700; margin-bottom: 2px;">
+              Тема ${item.themeNum} • Розділ ${item.topicNum}
+            </div>
+            <div style="font-size: 13px; line-height: 1.4; color: var(--text-primary);">${item.bulletHtml}</div>
+          </div>
+        `;
+        
+        container.appendChild(div);
+      });
+      
+      scrollActiveAudiobookItemIntoView();
+    }
+
+    function scrollActiveAudiobookItemIntoView() {
+      const activeEl = document.getElementById(`audiobook-item-${currentAudiobookIndex}`);
+      if (activeEl) {
+        activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function toggleAudiobook() {
+      if (isAudiobookPlaying) {
+        pauseAudiobook();
+      } else {
+        startAudiobook();
+      }
+    }
+
+    function startAudiobook() {
+      if (audiobookPlaylist.length === 0) {
+        setupAudiobookPlaylist();
       }
       
-      playCurrentFact();
+      isAudiobookPlaying = true;
+      document.getElementById('audiobook-play-icon').className = 'fa-solid fa-pause';
+      
+      const voices = window.speechSynthesis.getVoices();
+      const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
+      
+      const statusEl = document.getElementById('audiobook-status');
+      if (statusEl) {
+        statusEl.innerText = ukVoice ? "Грає" : "Грає (Онлайн)";
+        statusEl.style.color = "var(--success)";
+      }
+      
+      playCurrentAudiobookFact();
+    }
+
+    function pauseAudiobook() {
+      isAudiobookPlaying = false;
+      stopAllSpeech();
+      
+      const playIcon = document.getElementById('audiobook-play-icon');
+      if (playIcon) playIcon.className = 'fa-solid fa-play';
+      
+      const voices = window.speechSynthesis.getVoices();
+      const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
+      
+      const statusEl = document.getElementById('audiobook-status');
+      if (statusEl) {
+        statusEl.innerText = ukVoice ? "Вимкнено" : "Вимкнено (Онлайн)";
+        statusEl.style.color = "var(--text-secondary)";
+      }
+      
+      // Update items styling
+      document.querySelectorAll('.audiobook-item').forEach((el, idx) => {
+        el.classList.remove('active');
+        if (idx === currentAudiobookIndex) {
+          el.classList.add('active');
+          const icon = el.querySelector('.bullet-indicator i');
+          if (icon) icon.className = 'fa-solid fa-circle';
+        }
+      });
+    }
+
+    function selectAudiobookFact(index) {
+      currentAudiobookIndex = index;
+      updateAudiobookProgressUI();
+      
+      // Update active styling instantly
+      document.querySelectorAll('.audiobook-item').forEach((el, idx) => {
+        el.classList.toggle('active', idx === index);
+        const icon = el.querySelector('.bullet-indicator i');
+        if (icon) {
+          icon.className = idx === index && isAudiobookPlaying ? 'fa-solid fa-circle-play fa-spin' : 'fa-solid fa-circle';
+        }
+      });
+      
+      if (isAudiobookPlaying) {
+        playCurrentAudiobookFact();
+      } else {
+        startAudiobook();
+      }
+    }
+
+    function changeAudiobookVoice() {
+      const voiceSelect = document.getElementById('audiobook-voice-select');
+      if (voiceSelect && voiceSelect.value !== "" && voiceSelect.value !== "online" && audioVoices.length > 0) {
+        selectedVoice = audioVoices[parseInt(voiceSelect.value)];
+        
+        // Sync with Radio tab voice select
+        const radioVoiceSelect = document.getElementById('audio-voice-select');
+        if (radioVoiceSelect) {
+          radioVoiceSelect.value = voiceSelect.value;
+        }
+      }
+      if (isAudiobookPlaying) {
+        playCurrentAudiobookFact();
+      }
+    }
+
+    function changeAudiobookSpeed() {
+      // Sync speed with Radio tab speed select
+      const speedSelect = document.getElementById('audiobook-speed-select');
+      const radioSpeedSelect = document.getElementById('audio-speed-select');
+      if (speedSelect && radioSpeedSelect) {
+        radioSpeedSelect.value = speedSelect.value;
+      }
+      if (isAudiobookPlaying) {
+        playCurrentAudiobookFact();
+      }
+    }
+
+    function playCurrentAudiobookFact() {
+      if (!isAudiobookPlaying) return;
+      if (audiobookPlaylist.length === 0) return;
+      
+      if (currentAudiobookIndex >= audiobookPlaylist.length) {
+        currentAudiobookIndex = 0; // Loop back to start
+      }
+      
+      if (currentAudiobookIndex < 0) {
+        currentAudiobookIndex = audiobookPlaylist.length - 1;
+      }
+      
+      const fact = audiobookPlaylist[currentAudiobookIndex];
+      
+      updateAudiobookProgressUI();
+      
+      // Highlight active element in list
+      document.querySelectorAll('.audiobook-item').forEach((el, idx) => {
+        el.classList.toggle('active', idx === currentAudiobookIndex);
+        const icon = el.querySelector('.bullet-indicator i');
+        if (icon) {
+          icon.className = idx === currentAudiobookIndex ? 'fa-solid fa-circle-play fa-spin' : 'fa-solid fa-circle';
+        }
+      });
+      
+      scrollActiveAudiobookItemIntoView();
+      
+      stopAllSpeech();
+      
+      const voices = window.speechSynthesis.getVoices();
+      const ukVoice = voices.find(v => v.lang.startsWith('uk') || v.lang.includes('UA') || v.lang.startsWith('UK'));
+
+      let speechStartTime = Date.now();
+
+      const onEnd = () => {
+        if (isAudiobookPlaying) {
+          currentAudiobookIndex++;
+          setTimeout(playCurrentAudiobookFact, 1200); // 1.2s break between facts
+        }
+      };
+
+      const onError = (e) => {
+        console.warn("Audiobook speech error:", e);
+        if (isAudiobookPlaying) {
+          const duration = Date.now() - speechStartTime;
+          if (duration < 250) {
+            console.error("Audiobook instant skip/error. Pausing.");
+            pauseAudiobook();
+            if (window.location.protocol === 'file:') {
+              alert("Помилка відтворення голосу.\n\nОскільки сторінка відкрита локально як файл (file://), ваш браузер блокує інтернет-озвучку через політику безпеки CORS.\n\nЩоб це виправити, ви можете:\n1. Завантажити проект на GitHub Pages (там все працюватиме автоматично).\n2. Або встановити український мовний пакет у налаштуваннях Windows (Час та мова -> Мовлення -> Додати голоси -> Українська), щоб озвучка працювала повністю офлайн.");
+            } else {
+              alert("Помилка відтворення голосу. Будь ласка, оберіть інший голос у налаштуваннях, перевірте з'єднання з Інтернетом або перезапустіть сторінку.");
+            }
+          } else {
+            currentAudiobookIndex++;
+            setTimeout(playCurrentAudiobookFact, 1000);
+          }
+        }
+      };
+
+      if (ukVoice) {
+        // Native Speech Synthesis
+        const utterance = new SpeechSynthesisUtterance(fact.text);
+        
+        // Voice selection
+        const voiceSelect = document.getElementById('audiobook-voice-select');
+        if (voiceSelect && voiceSelect.value !== "" && voiceSelect.value !== "online" && audioVoices.length > 0) {
+          utterance.voice = audioVoices[parseInt(voiceSelect.value)];
+        } else if (selectedVoice) {
+          utterance.voice = selectedVoice;
+        } else {
+          utterance.voice = ukVoice;
+        }
+
+        const speedSelect = document.getElementById('audiobook-speed-select');
+        if (speedSelect) {
+          utterance.rate = parseFloat(speedSelect.value);
+        }
+
+        utterance.onend = onEnd;
+        utterance.onerror = onError;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        // Fallback to online Google Translate TTS
+        playGoogleTTS(fact.text, onEnd, onError);
+      }
+    }
+
+    function prevAudiobookFact() {
+      if (audiobookPlaylist.length === 0) {
+        setupAudiobookPlaylist();
+      }
+      currentAudiobookIndex--;
+      if (currentAudiobookIndex < 0) {
+        currentAudiobookIndex = audiobookPlaylist.length - 1;
+      }
+      selectAudiobookFact(currentAudiobookIndex);
+    }
+
+    function nextAudiobookFact() {
+      if (audiobookPlaylist.length === 0) {
+        setupAudiobookPlaylist();
+      }
+      currentAudiobookIndex++;
+      if (currentAudiobookIndex >= audiobookPlaylist.length) {
+        currentAudiobookIndex = 0;
+      }
+      selectAudiobookFact(currentAudiobookIndex);
     }
 
     // ----------------------------------------------------
